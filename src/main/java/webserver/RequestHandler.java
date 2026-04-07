@@ -1,10 +1,10 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
+import java.nio.file.Files;
+import java.util.Arrays;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,25 +23,80 @@ public class RequestHandler implements Runnable {
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
-            DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "<h1>Hello World</h1>".getBytes();
-            response200Header(dos, body.length);
-            responseBody(dos, body);
+            // TODO: 요청 브라우저의 HTTP 메세지 확인 및 데이터 추출
+            InputStreamReader isr = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(isr);
+
+            logger.debug("[Client's HTTP Message]");
+            String line;
+            List<String> httpStarts = Arrays.stream(br.readLine().split(" ")).toList();
+            logger.debug(httpStarts.toString());
+
+            while((line = br.readLine()) != null) {
+                if(line.isEmpty())
+                    break;
+
+                logger.debug(line);
+            }
+
+            // TODO: 사용자 요청 처리
+            if(httpStarts.get(0).equals("GET")){
+                DataOutputStream dos = new DataOutputStream(out);
+
+                // TODO: "."이 없는 내용들이 들어온다면?
+                String[] requestResource = httpStarts.get(1).split("\\.");
+                String fileName = requestResource[0];
+                String extension = requestResource[1];
+
+                // 방어로직 1
+                if(fileName.equals("/")){
+                    fileName = "/index";
+                    extension = ".html";
+                }
+
+                String targetUrl = "src/main/resources/static" + fileName + "." + extension;
+
+                File file = new File(targetUrl);
+
+                // 방어로직 2
+                if(!file.exists()){
+                    return;
+                }
+
+                byte[] body = Files.readAllBytes(file.toPath());
+                response200Header(dos, body.length, extension);
+                responseBody(dos, body);
+            }
+
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String extension) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + getMimeType(extension) + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
+    }
+
+    private String getMimeType(String extension) {
+        return switch (extension) {
+            case "html" -> "text/html;charset=utf-8";
+            case "css" -> "text/css";
+            case "js" -> "application/javascript";
+            case "ico" -> "image/x-icon";
+            case "png" -> "image/png";
+            case "svg" -> "image/svg+xml";
+            case "jpg", "jpeg" -> "image/jpeg";
+            case "gif" -> "image/gif";
+            case "txt" -> "text/plain;charset=utf-8";
+            default -> "application/octet-stream";
+        };
     }
 
     private void responseBody(DataOutputStream dos, byte[] body) {
