@@ -19,32 +19,22 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
-                connection.getPort());
+        logger.debug("New Client Connect! Connected IP : {}, Port : {}",
+                connection.getInetAddress(), connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
-            // TODO: 요청 브라우저의 HTTP 메세지 확인 및 데이터 추출
-            InputStreamReader isr = new InputStreamReader(in);
-            BufferedReader br = new BufferedReader(isr);
+        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
 
             logger.debug("[Client's HTTP Message]");
-            String line;
-            List<String> httpStarts = Arrays.stream(br.readLine().split(" ")).toList();
-            logger.debug(httpStarts.toString());
-
-            while((line = br.readLine()) != null) {
-                if(line.isEmpty())
-                    break;
-
-                logger.debug(line);
-            }
+            HttpRequest httpRequest = HttpRequest.of(br);
+            logger.debug(httpRequest.getAllRequest());
 
             // TODO: 사용자 요청 처리
-            if(httpStarts.get(0).equals("GET")){
-                DataOutputStream dos = new DataOutputStream(out);
-
+            String method = httpRequest.getMethod();
+            String path = httpRequest.getPath();
+            if(method.equals("GET")){
                 // TODO: "."이 없는 내용들이 들어온다면?
-                String[] requestResource = httpStarts.get(1).split("\\.");
+                String[] requestResource = path.split("\\.");
                 String fileName = requestResource[0];
                 String extension = requestResource[1];
 
