@@ -11,12 +11,13 @@ import java.nio.file.NoSuchFileException;
 
 public class HttpResponse {
     private final byte[] body;
-    private final String extension;
     private final String statusCode;
+    private final String contentType;
 
     private static final String INDEX_FILE_NAME = "index";
     private static final String INDEX_EXTENSION = "html";
-    private static final String STATIC_PATH = "src/main/resources/static";
+    private static final String STATIC_PATH = "src/main/resources/static/";
+    private static final String DOT = ".";
 
     // TODO: 추후 정리 대상
     private static final String PATH_404 = "src/main/resources/static/status/404.html";
@@ -27,33 +28,31 @@ public class HttpResponse {
     private static final String MSG_404 = "404 Not Found";
     private static final String MSG_500 = "500 Internal Server Error";
 
-    private static final String DOT = ".";
-
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
     private HttpResponse(byte[] body, String extension, String statusCode) {
         this.body = body;
-        this.extension = extension;
         this.statusCode = statusCode;
+        this.contentType = getMime(extension);
     }
 
     private static HttpResponse ok(byte[] body, String extension) {
-        return new HttpResponse(body, extension, "200 OK");
+        return new HttpResponse(body, extension, MSG_200);
     }
 
     // Error
     private static HttpResponse notFound(byte[] body) {
-        return new HttpResponse(body, INDEX_EXTENSION, "404 Not Found");
+        return new HttpResponse(body, INDEX_EXTENSION, MSG_404);
     }
     private static HttpResponse forbidden(byte[] body) {
-        return new HttpResponse(body, INDEX_EXTENSION, "403 Forbidden");
+        return new HttpResponse(body, INDEX_EXTENSION, MSG_403);
     }
     private static HttpResponse internalServerError(byte[] body) {
-        return new HttpResponse(body, INDEX_EXTENSION, "500 Internal Server Error");
+        return new HttpResponse(body, INDEX_EXTENSION, MSG_500);
     }
 
     // Response 메세지를 만들어서 반환
-    public static HttpResponse of(String method, String path) {
+    public static HttpResponse of(String path) {
         String[] pathSplits = validatePath(path);
         String fileName = pathSplits[0];
         String extension = pathSplits[1];
@@ -81,16 +80,17 @@ public class HttpResponse {
     }
 
     private static String[] validatePath(String path){
-        try {
-            String[] requestResource = path.split("\\.");
-            String fileName = requestResource[0];
-            String extension = requestResource[1];
-
-            return new String[]{fileName, extension};
-        } catch (ArrayIndexOutOfBoundsException e) {
-            logger.error(e.getMessage());
+        if(path.equals("/"))
             return new String[]{INDEX_FILE_NAME, INDEX_EXTENSION};
-        }
+
+        int lastDotIndex = path.lastIndexOf(DOT);
+        if(lastDotIndex == -1)
+            return new String[]{path.substring(1), ""};
+
+        String fileName = path.substring(1, lastDotIndex);
+        String extension = path.substring(lastDotIndex + 1);
+
+        return new String[]{fileName, extension};
     }
     private static byte[] getFileByteData(String path) throws IOException {
         File file = new File(path);
@@ -104,14 +104,17 @@ public class HttpResponse {
             return fallBackMessage.getBytes();
         }
     }
+    private String getMime(String extension) {
+        return Mime.getContentTypeThroughExtension(extension);
+    }
 
     public byte[] getBody() {
         return body;
     }
-    public String getExtension() {
-        return extension;
-    }
     public String getStatusCode() {
         return statusCode;
+    }
+    public String getContentType() {
+        return contentType;
     }
 }
