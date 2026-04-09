@@ -4,6 +4,8 @@ plugins {
 
 group 'codesquad'
 version '1.0-SNAPSHOT'
+
+// Java 21 환경이군요! 최신 기능을 마음껏 활용하기 딱 좋은 버전입니다.
 sourceCompatibility = '21'
 targetCompatibility = '21'
 
@@ -17,10 +19,20 @@ dependencies {
 
     implementation 'ch.qos.logback:logback-classic:1.2.3'
     testImplementation 'org.assertj:assertj-core:3.16.1'
+    testImplementation 'org.mockito:mockito-core:4.0.0'
+}
 
-
+// 1. 자바 컴파일 시 UTF-8 인코딩을 사용하도록 설정합니다.
+// 소스 코드에 포함된 한글이 컴파일 과정에서 깨지는 것을 방지합니다.
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
 }
 
 test {
     useJUnitPlatform()
+
+    // 2. 테스트 실행 시에도 UTF-8 환경을 강제합니다.
+    // 테스트 결과나 로그에 찍히는 한글 깨짐 현상을 해결해줍니다.
+    systemProperty "file.encoding", "UTF-8"
 }
+
