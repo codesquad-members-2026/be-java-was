@@ -1,11 +1,11 @@
 package webserver;
 
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.Socket;
 
+import fileIO.FileLoader;
+import http.MyHttpRequest;
+import http.MyHttpRequestParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -22,14 +22,66 @@ public class RequestHandler implements Runnable {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
-        try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
+        try (InputStream in = connection.getInputStream();
+             OutputStream out =connection.getOutputStream()) {
             // TODO 사용자 요청에 대한 처리는 이 곳에 구현하면 된다.
+
+            MyHttpRequest newRequest = MyHttpRequestParser.parse(in);
+            if(newRequest == null) return;
+
+            byte[] body = handleRequest(newRequest);
+
             DataOutputStream dos = new DataOutputStream(out);
-            byte[] body = "<h1>Hello World</h1>".getBytes();
+//            byte[] body = "<h1>Hello World</h1>".getBytes();
             response200Header(dos, body.length);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
+        }
+    }
+
+    private byte[] handleRequest(MyHttpRequest request){
+        String url = "";
+        if(request.getMethod().equals("GET")){
+            url = getHandlerResolver(request);
+        }
+        return viewResolver(url);
+    }
+
+    private byte[] viewResolver(String url) {
+        if(url.contains("static")){
+            try{
+                return FileLoader.getStaticFile(url);
+            }
+            catch(IOException e){
+                e.printStackTrace();
+            }
+        }
+        return null;
+    }
+
+    private String getHandlerResolver(MyHttpRequest request) {
+        String url = request.getUrl();
+        logger.debug("GetRequest received for : {}" ,url);
+        if(url.equals("/")){
+            return "/static/index.html";
+        }
+        else{
+            return "/static/" + url;
+        }
+    }
+
+
+
+    private String convertRequestToString(InputStream in) throws IOException {
+        try(BufferedReader bs = new BufferedReader( new InputStreamReader(in)))
+        {
+            StringBuilder sb = new StringBuilder();
+            String s;
+            while((s = bs.readLine()) != null){
+                sb.append(s);
+            }
+            return sb.toString();
         }
     }
 
