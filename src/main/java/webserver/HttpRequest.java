@@ -56,4 +56,10 @@ public class HttpRequest {
     public Map<String, String> getHeader() {
         return header;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s %s %s", method, path, protocol);
+    }
+
 }

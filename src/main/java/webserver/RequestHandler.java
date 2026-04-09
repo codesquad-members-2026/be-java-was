@@ -37,10 +37,12 @@ public class RequestHandler implements Runnable {
             String method = request.getMethod();
             String path = request.getPath();
 
+            logger.debug("Request: {}", request);
+
             // TODO: 메서드 별로 분리
             File file = new File("src/main/resources/static" + path);
             byte[] body = "<h1>Hello World</h1>".getBytes();
-            if (file.canRead()) {
+            if (!file.isDirectory()) {
                 body = Files.readAllBytes(file.toPath());
             }
 
