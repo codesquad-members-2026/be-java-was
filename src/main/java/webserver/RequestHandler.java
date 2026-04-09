@@ -6,6 +6,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import jdk.jfr.ContentType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,13 +28,9 @@ public class RequestHandler implements Runnable {
 
             InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
-                String line = br.readLine();
-                String[] tokens = line.split(" ");
-            tokens[0] = tokens[0].trim();
-            tokens[1] = tokens[1].trim();
-            tokens[2] = tokens[2].trim();
-
-            String path = tokens[1];
+            String line = br.readLine();
+            String[] tokens = line.split(" ");
+            String path = tokens[1].trim();
 
             while (line != null && !line.isEmpty()) {
                 logger.debug("header : {}", line);
@@ -41,20 +38,42 @@ public class RequestHandler implements Runnable {
             }
 
             DataOutputStream dos = new DataOutputStream(out);
-            if (path.equals("/")) {path = "/index.html";}
+
+            if (path.equals("/")) {
+                path = "/index.html";
+            }
+
+            if (!path.contains(".")) {
+                if (!path.endsWith("/")) path += "/";
+                path += "index.html";
+            }
+            String contentType = getMimeType(path);
             byte[] body = Files.readAllBytes(new File("./src/main/resources/static" + path).toPath());
-            response200Header(dos, body.length);
+            response200Header(dos, body.length, contentType);
             responseBody(dos, body);
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent) {
+    private String getMimeType(String path) {
+        if (path.endsWith(".css")) return "text/css";
+        if (path.endsWith(".js"))  return "application/javascript";
+        if (path.endsWith(".svg")) return "image/svg+xml";
+        if (path.endsWith(".png")) return "image/png";
+        if (path.endsWith(".ico")) return "image/x-icon";
+
+        return "text/html";
+    }
+
+    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String contentType) {
         try {
             dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: text/html;charset=utf-8\r\n");
+            dos.writeBytes("Content-Type: " + contentType + ";charset=utf-8\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
+
+            dos.writeBytes("X-Content-Type-Options: nosniff\r\n");
+
             dos.writeBytes("\r\n");
         } catch (IOException e) {
             logger.error(e.getMessage());
