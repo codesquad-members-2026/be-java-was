@@ -14,7 +14,6 @@ public class HttpResponse {
     private final String statusCode;
     private final String contentType;
 
-    private static final String INDEX_FILE_NAME = "index";
     private static final String INDEX_EXTENSION = "html";
     private static final String STATIC_PATH = "src/main/resources/static/";
     private static final String DOT = ".";
@@ -54,18 +53,18 @@ public class HttpResponse {
 
     // Response 메세지를 만들어서 반환
     public static HttpResponse of(String path) {
-        String[] pathSplits = validatePath(path);
-        String fileName = pathSplits[0];
-        String extension = pathSplits[1];
-        String targetSourcePath = STATIC_PATH + fileName + DOT + extension;
-        logger.debug("[Absolute Path]: {}", targetSourcePath);
+        String[] splits = splitPath(path);
+        String pathWithoutExtension = splits[0];
+        String extension = splits[1];
+        String absolutePath = STATIC_PATH + pathWithoutExtension + DOT + extension;
+        logger.debug("[Absolute Path]: {}", absolutePath);
 
         // TODO: 상태를 처리하는 클래스 추후 분리
         byte[] body;
         try {
-            body = getFileByteData(targetSourcePath);
+            body = getFileByteData(absolutePath);
             logger.debug("");
-            return new HttpResponse(body, extension, MSG_200);
+            return ok(body, extension);
         } catch (NoSuchFileException ne) {
             logger.error(MSG_404 + ": ", ne);
             body = getSafeErrorPage(PATH_404, MSG_404);
@@ -81,10 +80,7 @@ public class HttpResponse {
         }
     }
 
-    private static String[] validatePath(String path){
-        if(path.equals("/"))
-            return new String[]{INDEX_FILE_NAME, INDEX_EXTENSION};
-
+    private static String[] splitPath(String path){
         int lastDotIndex = path.lastIndexOf(DOT);
         if(lastDotIndex == -1)
             return new String[]{path.substring(1), ""};

@@ -30,12 +30,12 @@ public class RequestHandler implements Runnable {
             // TODO: 왜 br은 HttpRequest 에서 사용된 뒤 아래의 코드에서 사용하면 오류가 발생하는지 정리
 
             String method = httpRequest.getMethod();
-            String path = httpRequest.getPath();
+            String routedPath = Router.convertPath(httpRequest.getPath());
             String protocol = httpRequest.getProtocol();
 
             // TODO: GET/POST/PUT/DELETE 등 분기 처리
             if(method.equals("GET")){
-                HttpResponse httpResponse = HttpResponse.of(path);
+                HttpResponse httpResponse = HttpResponse.of(routedPath);
                 byte[] body = httpResponse.getBody();
                 String contentType = httpResponse.getContentType();
                 String statusCode = httpResponse.getStatusCode();
