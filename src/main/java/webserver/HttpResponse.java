@@ -18,6 +18,7 @@ public class HttpResponse {
     private static final String INDEX_EXTENSION = "html";
     private static final String STATIC_PATH = "src/main/resources/static/";
     private static final String DOT = ".";
+    private static final String CRLF = "\r\n";
 
     // TODO: 추후 정리 대상
     private static final String PATH_404 = "src/main/resources/static/status/404.html";
@@ -57,6 +58,7 @@ public class HttpResponse {
         String fileName = pathSplits[0];
         String extension = pathSplits[1];
         String targetSourcePath = STATIC_PATH + fileName + DOT + extension;
+        logger.debug("[Absolute Path]: {}", targetSourcePath);
 
         // TODO: 상태를 처리하는 클래스 추후 분리
         byte[] body;
@@ -116,5 +118,12 @@ public class HttpResponse {
     }
     public String getContentType() {
         return contentType;
+    }
+    public String getCoreResponse() {
+        int bodyLength = body.length;
+
+        return "Status-Code: " + this.statusCode + CRLF +
+                "Content-Type: " + this.contentType + CRLF +
+                "Content-Length: " + bodyLength;
     }
 }

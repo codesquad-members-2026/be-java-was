@@ -1,19 +1,21 @@
 package webserver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.*;
-
-/*
-    클라이언트에서 InputStream 으로 넘어온 HTTP 메세지를 파싱
- */
 
 public class HttpRequest {
     private final String method;
     private final String path;
     private final String protocol;
-
     private final Map<String, String> headers;
+
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
+
+    private static final String CRLF = "\r\n";
 
     private HttpRequest(String method, String path, String protocol, Map<String, String> headers) {
         this.method = method;
@@ -42,13 +44,16 @@ public class HttpRequest {
         return new HttpRequest(method, path, protocol, headers);
     }
 
-    public String getAllRequest() {
-        StringBuilder allRequest = new StringBuilder();
+    public String getCoreRequestInfo(){
+        StringBuilder coreRequestInfo = new StringBuilder();
+        coreRequestInfo.append(method).append(" ").append(path).append(" ").append(protocol).append(" ").append(CRLF);
+        headers.forEach((k, v) -> {
+            if(k.equals("Host") || k.equals("Accept") || k.equals("Connection")){
+                coreRequestInfo.append(k).append(": ").append(v).append(CRLF);
+            }
+        });
 
-        allRequest.append(method).append(" ").append(path).append(" ").append(protocol).append(" ").append("\r\n");
-        headers.forEach((k, v) -> allRequest.append(k).append(": ").append(v).append(System.lineSeparator()));
-
-        return allRequest.toString();
+        return coreRequestInfo.toString();
     }
 
     public String getMethod() {
