@@ -2,10 +2,6 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.util.Arrays;
-import java.util.List;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,32 +25,22 @@ public class RequestHandler implements Runnable {
             HttpRequest httpRequest = HttpRequest.of(br);
             logger.debug(httpRequest.getAllRequest());
 
-            // TODO: 사용자 요청 처리
+            // TODO: 왜 br은 HttpRequest 에서 사용된 뒤 아래의 코드에서 사용하면 오류가 발생하는지 정리
+
             String method = httpRequest.getMethod();
             String path = httpRequest.getPath();
+            String protocol = httpRequest.getProtocol();
             if(method.equals("GET")){
                 // TODO: "."이 없는 내용들이 들어온다면?
-                String[] requestResource = path.split("\\.");
-                String fileName = requestResource[0];
-                String extension = requestResource[1];
+                HttpResponse httpResponse = HttpResponse.of(method, path);
+                byte[] body = httpResponse.getBody();
+                String extension = httpResponse.getExtension();
+                String statusCode = httpResponse.getStatusCode();
+                logger.debug("[Response Message Parsing Complete]");
+                logger.debug("Body Length: {}", body.length);
+                logger.debug("Status Code: {}", statusCode);
 
-                // 방어로직 1
-                if(fileName.equals("/")){
-                    fileName = "/index";
-                    extension = ".html";
-                }
-
-                String targetUrl = "src/main/resources/static" + fileName + "." + extension;
-
-                File file = new File(targetUrl);
-
-                // 방어로직 2
-                if(!file.exists()){
-                    return;
-                }
-
-                byte[] body = Files.readAllBytes(file.toPath());
-                response200Header(dos, body.length, extension);
+                responseHeader(dos, body.length, extension, statusCode, protocol);
                 responseBody(dos, body);
             }
 
@@ -63,9 +49,12 @@ public class RequestHandler implements Runnable {
         }
     }
 
-    private void response200Header(DataOutputStream dos, int lengthOfBodyContent, String extension) {
+    private void responseHeader(DataOutputStream dos, int lengthOfBodyContent,
+                                String extension, String statusCode, String protocol) throws IOException {
         try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
+            // TODO: HTTP 규약상 응답의 첫 줄(Start Line)은 반드시 [HTTP 버전] [상태 코드] [상태 메세지] 순서로 해야함
+            // 잘못 구성하면 브라우저는 HTTP 메세지를 읽지 않는다.
+            dos.writeBytes(protocol + " " + statusCode + " \r\n");
             dos.writeBytes("Content-Type: " + getMimeType(extension) + "\r\n");
             dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
             dos.writeBytes("\r\n");

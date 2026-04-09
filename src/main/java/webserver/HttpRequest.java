@@ -9,11 +9,11 @@ import java.util.*;
  */
 
 public class HttpRequest {
-    private String method;
-    private String path;
-    private String protocol;
+    private final String method;
+    private final String path;
+    private final String protocol;
 
-    private Map<String, String> headers;
+    private final Map<String, String> headers;
 
     private HttpRequest(String method, String path, String protocol, Map<String, String> headers) {
         this.method = method;
@@ -22,6 +22,7 @@ public class HttpRequest {
         this.headers = headers;
     }
 
+    // TODO: 왜 정적 팩토리 메서드로 객체를 반환하는가? 파싱 작업이 많이 일어나기 때문? -> 생성자에서 복잡한 연산이 이루어져서는 안됌
     public static HttpRequest of(BufferedReader br) throws IOException {
         List<String> startLine = Arrays.stream(br.readLine().split(" ")).toList();
         String method = startLine.get(0);
