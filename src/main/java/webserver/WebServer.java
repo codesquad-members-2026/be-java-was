@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import db.Database;
 import http.MyHttpRequest;
 import http.MyHttpResponse;
 import interfaces.HandlerMethod;
@@ -41,6 +42,7 @@ public class WebServer {
             // 클라이언트가 연결될때까지 대기한다.
             Socket connection;
             while ((connection = listenSocket.accept()) != null) {
+                connection.setSoTimeout(10000);
                 threadPool.execute(new RequestHandler(connection, router));
             }
         }

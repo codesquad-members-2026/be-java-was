@@ -24,8 +24,8 @@ public class ComponentScanner {
             Object controllerInstance = c.getDeclaredConstructor().newInstance();
             for(Method m : c.getDeclaredMethods()){
                 if(m.isAnnotationPresent(MyRequestMapping.class)){
-                    MyRequestMapping annoataion = m.getAnnotation(MyRequestMapping.class);
-                    String sig = annoataion.method() + " " + annoataion.path();
+                    MyRequestMapping annotation = m.getAnnotation(MyRequestMapping.class);
+                    String sig = annotation.method() + " " + annotation.path();
                     HandlerMethod newHandler = (req, res) -> {
                        m.invoke(controllerInstance, req,res);
                     };

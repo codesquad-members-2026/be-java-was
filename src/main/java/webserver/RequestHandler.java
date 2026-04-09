@@ -3,7 +3,6 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import fileIO.FileLoader;
 import http.MyHttpRequest;
 import http.MyHttpRequestParser;
 import http.MyHttpResponse;
@@ -40,71 +39,10 @@ public class RequestHandler implements Runnable {
                 throw new RuntimeException(e);
             }
 
-//
-//            // Router
-//            //    |  Static Resolver
-//            //          |
-//            //    |  Mapping Resolver
-//
-//            logger.debug("Body Generating");
-//            byte[] body = handleRequest(newRequest, newResponse);
-//            newResponse.setResponseBody(body);
-//            newResponse.send();
         } catch (IOException e) {
             logger.debug("IO EXCEPTION POPPED");
             logger.error(e.getMessage());
         }
     }
-
-//    private byte[] handleRequest(MyHttpRequest request, MyHttpResponse response) {
-//        String url = "";
-//        if (request.getMethod().equals("GET")) {
-//            url = getHandlerResolver(request, response);
-//        }
-//        return returnPageResolver(url);
-//    }
-//
-//    private byte[] returnPageResolver(String url) {
-//        if (url.contains("static")) {
-//            try {
-//                return FileLoader.getStaticFile(url);
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return null;
-//    }
-//
-//    private String getHandlerResolver(MyHttpRequest request, MyHttpResponse response) {
-//        String url = request.getUrl();
-//        logger.debug("GetRequest received for : {}", url);
-//        String retUrl = "";
-//        if (url.equals("/")) {
-//            retUrl = "/static/index.html";
-//        } else if (url.contains("css")) {
-//            response.setHeader("Content-Type", "text/css;charset=utf-8");
-//            retUrl = "/static" + url;
-//        } else if (url.contains("js")) {
-//            response.setHeader("Content-Type", "application/javascript;charset=utf-8");
-//            retUrl = "/static" + url;
-//        } else if (url.contains("ico")) {
-//            response.setHeader("Content-Type", "image/x-icon");
-//            retUrl = "/static" + url;
-//        } else if (url.contains("png")) {
-//            response.setHeader("Content-Type", "image/png");
-//            retUrl = "/static" + url;
-//        } else if (url.contains("jpg") || url.contains("jpeg")) {
-//            response.setHeader("Content-Type", "image/jpeg");
-//            retUrl = "/static" + url;
-//        } else if (url.contains("svg")) {
-//            response.setHeader("Content-Type", "image/svg+xml");
-//            retUrl = "/static" + url;
-//        }
-//        else {
-//            retUrl = "/static/index.html";
-//        }
-//        logger.debug("URL being sent to ViewResolver : {}", retUrl);
-//        return retUrl;
-//    }
 }
 

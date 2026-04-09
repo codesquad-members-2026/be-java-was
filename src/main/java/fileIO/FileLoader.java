@@ -13,6 +13,9 @@ public class FileLoader {
 
         String staticFilePath =  "/static" +(fileName);
         try(InputStream resourceAsStream = FileLoader.class.getResourceAsStream(staticFilePath)){
+            if(resourceAsStream == null){
+                throw new IOException("NO SUCH STATIC FILE FOUND");
+            }
             return resourceAsStream.readAllBytes();
         }
     }

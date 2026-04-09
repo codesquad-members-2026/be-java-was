@@ -4,15 +4,15 @@ import fileIO.FileLoader;
 import http.MyHttpRequest;
 import http.MyHttpResponse;
 import interfaces.HandlerMethod;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class Router {
-
+    private static final Logger logger = LoggerFactory.getLogger(Router.class);
     private final Map<String, HandlerMethod> handlers ;
 
     public Router(Map<String, HandlerMethod> injectedHandlers){
@@ -24,27 +24,34 @@ public class Router {
         String signature = extractSignature(request);
         HandlerMethod h = handlers.get(signature);
         if(h == null){
+            logger.debug("Searching For Static Files for Request : {} at {}", request.getMethod(), request.getUrl());
             returnStaticFiles(request,response);
             return;
         }
+        logger.debug("Called Handler for Request : {} {}", request.getMethod(), request.getUrl());
         h.handle(request, response);
     }
 
     private void returnStaticFiles(MyHttpRequest request, MyHttpResponse response) {
         if(!request.getMethod().equals("GET")){
             response.setStatus("400 Bad Request");
+            logger.debug("Sending 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         }
         String url = request.getUrl();
         try {
+
             byte[] file = FileLoader.getStaticFile(url);
             response.setStatus("200 OK");
             response.setHeader("Content-Type", MimeTypeParser.getContentType(MimeTypeParser.extractExtension(url)));
             response.setHeader("Content-Length", String.valueOf(file.length));
             response.setResponseBody(file);
+            logger.debug("Sending 200 Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         } catch (IOException e) {
+            logger.debug(e.getMessage());
             response.setStatus("400 Bad Request");
+            logger.debug("Exception Caused 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         }
 

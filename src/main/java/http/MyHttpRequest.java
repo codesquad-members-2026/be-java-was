@@ -10,7 +10,7 @@ public class MyHttpRequest {
     private String method;
     private String url;
     private byte[] body;
-    private Map<String, String> header = new HashMap<>();
+    private final Map<String, String> header = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
     private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
 
@@ -41,7 +41,24 @@ public class MyHttpRequest {
     private void fillMethodLine(String line) {
         String[] firstLineStrings = line.split(" ");
         this.method = firstLineStrings[0];
-        this.url = firstLineStrings[1];
+        String unTreatedUrl = firstLineStrings[1];
+        if(unTreatedUrl.contains("?")){
+            String[] splitByQMark = unTreatedUrl.split("\\?",2);
+            this.url = splitByQMark[0].strip();
+            String[] params = splitByQMark[1].split("&");
+            for(String parameter : params){
+                String[] keyVal = parameter.split("=",2);
+                if(keyVal.length == 2){
+                    this.params.put(keyVal[0],keyVal[1]);
+                }
+                else if(keyVal.length == 1){
+                    this.params.put(keyVal[0], "");
+                }
+            }
+        }
+        else{
+            this.url = unTreatedUrl.strip();
+        }
     }
 
 
