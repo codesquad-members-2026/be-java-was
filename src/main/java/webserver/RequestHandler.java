@@ -3,9 +3,9 @@ package webserver;
 import java.io.*;
 import java.net.Socket;
 
-import db.Database;
-import exception.DuplicateUserInDBException;
-import model.User;
+import action.Action;
+import http.HttpRequest;
+import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class RequestHandler implements Runnable {
 
     private static final String CRLF = "\r\n";
 
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -29,40 +29,27 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[Client's HTTP Message]");
             HttpRequest httpRequest = HttpRequest.of(br);
-            logger.debug(httpRequest.getCoreRequestInfo());
-
-            // TODO: 왜 br은 HttpRequest 에서 사용된 뒤 아래의 코드에서 사용하면 오류가 발생하는지 정리
-
             String method = httpRequest.getMethod();
             String rawPath = httpRequest.getPath();
-            String routedPath = Router.convertPath(rawPath);
+            logger.debug(httpRequest.getCoreRequestInfo());
 
-            // TODO: GET/POST/PUT/DELETE 등 분기 처리
-            if(method.equals("GET")){
-                if(rawPath.equals("/create")){
-                    try {
-                        Database.addUser(User.of(httpRequest.getParameters()));
-                    } catch (DuplicateUserInDBException e) {
-                        logger.error("중복 회원 발생: {}", e.getMessage());
-                        routedPath = "/registration/register.html";
-                    }
-                }
+            Action action = Router.getAction(method, rawPath);
+            String routedPath = (action != null) ? action.process(httpRequest) : Router.convertStaticPath(rawPath);
 
-                HttpResponse httpResponse = HttpResponse.of(routedPath);
-                byte[] body = httpResponse.getBody();
-                logger.debug("[Response Message]");
-                logger.debug(httpResponse.getCoreResponse());
+            HttpResponse httpResponse = HttpResponse.of(routedPath);
+            byte[] body = httpResponse.getBody();
+            logger.debug("[Server's Response Message]");
+            logger.debug(httpResponse.getCoreResponse());
 
-                responseHeader(dos, body.length,
-                        httpResponse.getContentType(), httpResponse.getStatusCode(), httpRequest.getProtocol());
-                responseBody(dos, body);
-            }
+            responseHeader(dos, body.length,
+                    httpResponse.getContentType(), httpResponse.getStatusCode(), httpRequest.getProtocol());
+            responseBody(dos, body);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-
+    // TODO: 분리 필요
     private void responseHeader(DataOutputStream dos, int lengthOfBodyContent,
                                 String contentType, String statusCode, String protocol) throws IOException {
         try {
