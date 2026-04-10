@@ -1,0 +1,70 @@
+package http;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.io.BufferedOutputStream;
+
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+public class MyHttpResponse {
+    private static final Logger logger = LoggerFactory.getLogger(MyHttpResponse.class);
+    private DataOutputStream out;
+    private String status = "200 OK";
+    private Map<String, String> headers =new HashMap<>();
+    private byte[] responseBody;
+
+    public MyHttpResponse(OutputStream out){
+        this.out = new DataOutputStream(new BufferedOutputStream(out));
+        this.headers.put("Content-Type","text/html;charset=utf-8");
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+    public String getHeader(String headerKey){
+        return this.headers.get(headerKey);
+    }
+
+    public void setHeader(String key, String val) {
+        this.headers.put(key,val);
+    }
+
+    public byte[] getResponseBody() {
+        return responseBody;
+    }
+
+    public void setResponseBody(byte[] responseBody) {
+        this.headers.put("Content-Length", String.valueOf(responseBody.length));
+        this.responseBody = responseBody;
+    }
+
+
+    public void send(){
+        try{
+            this.out.writeBytes("HTTP/1.1 " + this.status + " \r\n");
+            for(String key : this.headers.keySet()){
+                this.out.writeBytes(key + ": "+this.headers.get(key) +"\r\n");
+            }
+            this.out.writeBytes("\r\n");
+            if(this.responseBody != null){
+                this.out.write(this.responseBody, 0 , this.responseBody.length);
+            }
+            this.out.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
