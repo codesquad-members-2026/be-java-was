@@ -2,6 +2,10 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+
+import db.Database;
+import exception.DuplicateUserInDBException;
+import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,19 +34,27 @@ public class RequestHandler implements Runnable {
             // TODO: 왜 br은 HttpRequest 에서 사용된 뒤 아래의 코드에서 사용하면 오류가 발생하는지 정리
 
             String method = httpRequest.getMethod();
-            String routedPath = Router.convertPath(httpRequest.getPath());
-            String protocol = httpRequest.getProtocol();
+            String rawPath = httpRequest.getPath();
+            String routedPath = Router.convertPath(rawPath);
 
             // TODO: GET/POST/PUT/DELETE 등 분기 처리
             if(method.equals("GET")){
+                if(rawPath.equals("/create")){
+                    try {
+                        Database.addUser(User.of(httpRequest.getParameters()));
+                    } catch (DuplicateUserInDBException e) {
+                        logger.error("중복 회원 발생: {}", e.getMessage());
+                        routedPath = "/registration/register.html";
+                    }
+                }
+
                 HttpResponse httpResponse = HttpResponse.of(routedPath);
                 byte[] body = httpResponse.getBody();
-                String contentType = httpResponse.getContentType();
-                String statusCode = httpResponse.getStatusCode();
                 logger.debug("[Response Message]");
                 logger.debug(httpResponse.getCoreResponse());
 
-                responseHeader(dos, body.length, contentType, statusCode, protocol);
+                responseHeader(dos, body.length,
+                        httpResponse.getContentType(), httpResponse.getStatusCode(), httpRequest.getProtocol());
                 responseBody(dos, body);
             }
 

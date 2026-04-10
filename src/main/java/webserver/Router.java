@@ -11,6 +11,8 @@ public class Router {
 
         urlMap.put("/registration", "/registration/register.html");
         urlMap.put("/register.html", "/registration/register.html");
+
+        urlMap.put("/create", "/login/login.html");
     }
 
     public static String convertPath(String origin){

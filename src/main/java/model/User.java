@@ -1,16 +1,34 @@
 package model;
 
+import db.Database;
+import exception.DuplicateUserInDBException;
+
+import java.util.Map;
+
 public class User {
     private String userId;
     private String password;
     private String name;
     private String email;
 
-    public User(String userId, String password, String name, String email) {
+    private User(String userId, String password, String name, String email) {
         this.userId = userId;
         this.password = password;
         this.name = name;
         this.email = email;
+    }
+
+    public static User of(Map<String, String> params) {
+        String tempUserId = params.get("userId");
+        String tempUserPassword = params.get("password");
+        String tempUserName = params.get("name");
+        String tempUserEmail = params.get("email");
+
+        if(Database.findUserById(tempUserId) == null) {
+            return new User(tempUserId, tempUserPassword, tempUserName, tempUserEmail);
+        }
+
+        throw new DuplicateUserInDBException(tempUserId + " already exists");
     }
 
     public String getUserId() {
