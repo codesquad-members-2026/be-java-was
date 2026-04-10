@@ -2,24 +2,23 @@ package http;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 
+import static utils.HttpConstant.CRLF;
+
 public class HttpResponse {
     private final byte[] body;
     private final String statusCode;
     private final String contentType;
 
+    private static final String DOT = ".";
+
     private static final String INDEX_EXTENSION = "html";
     private static final String STATIC_PATH = "src/main/resources/static/";
-    private static final String DOT = ".";
-    private static final String CRLF = "\r\n";
-
-    // TODO: 추후 정리 대상
     private static final String PATH_404 = "src/main/resources/static/status/404.html";
     private static final String PATH_403 = "src/main/resources/static/status/403.html";
     private static final String PATH_500 = "src/main/resources/static/status/500.html";

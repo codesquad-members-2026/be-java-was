@@ -1,8 +1,5 @@
 package http;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -12,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
 
+import static utils.HttpConstant.CRLF;
+
 public class HttpRequest {
     private final String method;
     private final String path;
@@ -19,9 +18,6 @@ public class HttpRequest {
     private final Map<String, String> headers;
     private final Map<String, String> parameters;
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
-
-    private static final String CRLF = "\r\n";
     private static final String QUERY_SEPARATOR = "\\?";
     private static final Character KEY_VALUE_SEPARATOR = '=';
     private static final Character PARAMETER_SEPARATOR = '&';
