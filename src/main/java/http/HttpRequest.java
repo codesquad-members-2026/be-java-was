@@ -35,29 +35,18 @@ public class HttpRequest {
         this.parameters = parameters;
     }
 
-    // TODO: 왜 정적 팩토리 메서드로 객체를 반환하는가? 파싱 작업이 많이 일어나기 때문? -> 생성자에서 복잡한 연산이 이루어져서는 안됌
     public static HttpRequest of(BufferedReader br) throws IOException {
         List<String> startLine = Arrays.stream(br.readLine().split(" ")).toList();
         String method = startLine.get(0);
+        String originPath = startLine.get(1);
 
-        String[] pathSplits = startLine.get(1).split(QUERY_SEPARATOR);
+        String[] pathSplits = originPath.split(QUERY_SEPARATOR);
         String path = pathSplits[0];
-        Map<String, String> params = new HashMap<>();
-        if(pathSplits.length > 1){
-            params = extractPathAndParams(pathSplits[1]);
-        }
+        Map<String, String> params = pathSplits.length > 1 ? extractPathAndParams(pathSplits[1]) : new HashMap<>();
 
         String protocol = startLine.get(2);
 
-        Map<String, String> headers = new HashMap<>();
-        String line;
-        while((line = br.readLine()) != null) {
-            if(line.isEmpty())
-                break;
-
-            String[] header = line.split(":", 2);
-            headers.put(header[0].trim(), header[1].trim());
-        }
+        Map<String, String> headers = extractHeaders(br);
 
         return new HttpRequest(method, path, protocol, headers, params);
     }
@@ -77,6 +66,20 @@ public class HttpRequest {
     }
     private static String decodeValue(String value) {
         return URLDecoder.decode(value, StandardCharsets.UTF_8);
+    }
+    private static Map<String, String> extractHeaders(BufferedReader br) throws IOException {
+        Map<String, String> result = new HashMap<>();
+
+        String line;
+        while((line = br.readLine()) != null) {
+            if(line.isEmpty())
+                break;
+
+            String[] header = line.split(":", 2);
+            result.put(header[0].trim(), header[1].trim());
+        }
+
+        return result;
     }
 
     public String getCoreRequestInfo(){
