@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 Forbidden</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            background-color: #f8f9fa;
+            color: #343a40;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .error-container {
+            background-color: #ffffff;
+            padding: 50px 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .error-code {
+            font-size: 120px;
+            font-weight: 800;
+            color: #ff922b; /* 403은 경고 느낌의 오렌지색! */
+            line-height: 1;
+            margin-bottom: 10px;
+            letter-spacing: -5px;
+        }
+
+        .error-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #212529;
+        }
+
+        .error-message {
+            font-size: 16px;
+            color: #868e96;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            word-break: keep-all;
+        }
+
+        .home-btn {
+            display: inline-block;
+            background-color: #4dabf7;
+            color: white;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            padding: 14px 30px;
+            border-radius: 8px;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .home-btn:hover {
+            background-color: #339af0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(77, 171, 247, 0.3);
+        }
+    </style>
+</head>
+<body>
+
+<div class="error-container">
+    <div class="error-code">403</div>
+    <h2 class="error-title">접근 권한이 없습니다</h2>
+    <p class="error-message">
+        요청하신 페이지나 파일에 접근할 수 있는 권한이 없습니다.<br>
+        관리자에게 문의하거나 올바른 계정으로 로그인해 주세요.
+    </p>
+    <a href="/index.html" class="home-btn">메인으로 돌아가기</a>
+</div>
+
+</body>
+</html>
