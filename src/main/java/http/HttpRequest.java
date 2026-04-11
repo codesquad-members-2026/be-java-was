@@ -6,20 +6,22 @@ import org.slf4j.LoggerFactory;
 import java.security.InvalidParameterException;
 import java.util.*;
 
-public class MyHttpRequest {
+public class HttpRequest {
+
+    // TODO : TURNING FIELDS INTO CLASS SO THAT WORK CAN BE DONE BY EACH OF THEM
+    // TODO : BUSINESS LOGIC CAN BE FREED OF UNRELATED WORKS
+
     private String method;
     private String url;
     private byte[] body;
     private final Map<String, String> header = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
-    private static final Logger logger = LoggerFactory.getLogger(MyHttpRequest.class);
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
-    public MyHttpRequest(List<String> headers){
+    public HttpRequest(List<String> headers){
 
         if(headers == null || headers.isEmpty()) return;
-
         fillMethodLine(headers.get(0));
-
         for(int i = 1; i < headers.size(); i++){
             parseHeader(headers.get(i));
         }

@@ -1,11 +1,11 @@
 package interfaces;
 
-import http.MyHttpRequest;
-import http.MyHttpResponse;
+import http.HttpRequest;
+import http.HttpResponse;
 
 import java.lang.reflect.InvocationTargetException;
 
 @FunctionalInterface
 public interface HandlerMethod {
-    public void handle(MyHttpRequest request, MyHttpResponse response) throws InvocationTargetException, IllegalAccessException;
+    public void handle(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException;
 }

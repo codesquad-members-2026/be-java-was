@@ -10,9 +10,9 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MyHttpRequestParser {
-    private static final Logger logger = LoggerFactory.getLogger(MyHttpRequestParser.class);
-    public static MyHttpRequest parse(InputStream is) throws IOException {
+public class HttpRequestParser {
+    private static final Logger logger = LoggerFactory.getLogger(HttpRequestParser.class);
+    public static HttpRequest parse(InputStream is) throws IOException {
         BufferedInputStream bis = new BufferedInputStream(is);
             List<String> headers = new ArrayList<>();
             StringBuilder lineBuilder = new StringBuilder();
@@ -37,7 +37,7 @@ public class MyHttpRequestParser {
                 return null;
             }
 
-            MyHttpRequest request = new MyHttpRequest(headers);
+            HttpRequest request = new HttpRequest(headers);
             String contentLengthString = request.getHeader("Content-Length");
             if(contentLengthString != null){
                 int length = Integer.parseInt(contentLengthString.strip());

@@ -3,9 +3,9 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import http.MyHttpRequest;
-import http.MyHttpRequestParser;
-import http.MyHttpResponse;
+import http.HttpRequest;
+import http.HttpRequestParser;
+import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,8 +27,8 @@ public class RequestHandler implements Runnable {
         try (InputStream in = connection.getInputStream();
              OutputStream out = connection.getOutputStream()) {
 
-            MyHttpRequest newRequest = MyHttpRequestParser.parse(in);
-            MyHttpResponse newResponse = new MyHttpResponse(out);
+            HttpRequest newRequest = HttpRequestParser.parse(in);
+            HttpResponse newResponse = new HttpResponse(out);
             logger.debug("MyHttpRequest is null? : {}", newRequest == null);
             if (newRequest == null) return;
             try {

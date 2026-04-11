@@ -6,6 +6,8 @@ import java.util.Map;
 public class MimeTypeParser {
     private static final Map<String, String> MIME_TYPES = new HashMap<>();
 
+    // TODO : enum transition
+
     static{
         MIME_TYPES.put("html", "text/html;charset=utf-8");
         MIME_TYPES.put("css",  "text/css;charset=utf-8");

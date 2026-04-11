@@ -1,8 +1,8 @@
 package webserver;
 
 import fileIO.FileLoader;
-import http.MyHttpRequest;
-import http.MyHttpResponse;
+import http.HttpRequest;
+import http.HttpResponse;
 import interfaces.HandlerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,7 @@ public class Router {
         this.handlers = injectedHandlers;
     }
 
-    public void handleRequest(MyHttpRequest request, MyHttpResponse response) throws InvocationTargetException, IllegalAccessException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
 
         String signature = extractSignature(request);
         HandlerMethod h = handlers.get(signature);
@@ -32,7 +32,7 @@ public class Router {
         h.handle(request, response);
     }
 
-    private void returnStaticFiles(MyHttpRequest request, MyHttpResponse response) {
+    private void returnStaticFiles(HttpRequest request, HttpResponse response) {
         if(!request.getMethod().equals("GET")){
             response.setStatus("400 Bad Request");
             logger.debug("Sending 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
@@ -58,7 +58,7 @@ public class Router {
     }
 
 
-    private String extractSignature(MyHttpRequest request){
+    private String extractSignature(HttpRequest request){
         return request.getMethod().strip() + " " + request.getUrl().strip();
     }
 }

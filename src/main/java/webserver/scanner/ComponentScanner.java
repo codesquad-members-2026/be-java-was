@@ -1,8 +1,6 @@
 package webserver.scanner;
 
-import annotations.MyRequestMapping;
-import http.MyHttpRequest;
-import http.MyHttpResponse;
+import annotations.RequestMapping;
 import interfaces.HandlerMethod;
 
 import java.io.File;
@@ -23,8 +21,8 @@ public class ComponentScanner {
 
             Object controllerInstance = c.getDeclaredConstructor().newInstance();
             for(Method m : c.getDeclaredMethods()){
-                if(m.isAnnotationPresent(MyRequestMapping.class)){
-                    MyRequestMapping annotation = m.getAnnotation(MyRequestMapping.class);
+                if(m.isAnnotationPresent(RequestMapping.class)){
+                    RequestMapping annotation = m.getAnnotation(RequestMapping.class);
                     String sig = annotation.method() + " " + annotation.path();
                     HandlerMethod newHandler = (req, res) -> {
                        m.invoke(controllerInstance, req,res);

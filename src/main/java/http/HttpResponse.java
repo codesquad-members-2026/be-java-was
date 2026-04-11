@@ -11,14 +11,14 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyHttpResponse {
-    private static final Logger logger = LoggerFactory.getLogger(MyHttpResponse.class);
+public class HttpResponse {
+    private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
     private DataOutputStream out;
     private String status = "200 OK";
     private Map<String, String> headers =new HashMap<>();
     private byte[] responseBody;
 
-    public MyHttpResponse(OutputStream out){
+    public HttpResponse(OutputStream out){
         this.out = new DataOutputStream(new BufferedOutputStream(out));
         this.headers.put("Content-Type","text/html;charset=utf-8");
     }
