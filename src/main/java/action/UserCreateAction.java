@@ -11,7 +11,6 @@ public class UserCreateAction implements Action {
 
     private static final Logger logger = LoggerFactory.getLogger(UserCreateAction.class);
 
-
     public UserCreateAction(){}
 
     @Override

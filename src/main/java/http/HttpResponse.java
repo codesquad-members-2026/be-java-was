@@ -62,7 +62,6 @@ public class HttpResponse {
         byte[] body;
         try {
             body = getFileByteData(absolutePath);
-            logger.debug("");
             return ok(body, extension);
         } catch (NoSuchFileException ne) {
             logger.error(MSG_404 + ": ", ne);
@@ -79,6 +78,7 @@ public class HttpResponse {
         }
     }
 
+    // TODO: DOT이 여러개 들어간 파일은?
     private static String[] splitPath(String path){
         int lastDotIndex = path.lastIndexOf(DOT);
         if(lastDotIndex == -1)

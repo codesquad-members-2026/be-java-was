@@ -15,7 +15,7 @@ public class HttpRequest {
     private final String method;
     private final String path;
     private final String protocol;
-    private final Map<String, String> headers;
+    private final HttpHeaders headers;
     private final Map<String, String> parameters;
 
     private static final String QUERY_SEPARATOR = "\\?";
@@ -27,7 +27,7 @@ public class HttpRequest {
         this.method = method;
         this.path = path;
         this.protocol = protocol;
-        this.headers = headers;
+        this.headers = new HttpHeaders(headers);
         this.parameters = parameters;
     }
 
@@ -79,15 +79,10 @@ public class HttpRequest {
     }
 
     public String getCoreRequestInfo(){
-        StringBuilder coreRequestInfo = new StringBuilder();
-        coreRequestInfo.append(method).append(" ").append(path).append(" ").append(protocol).append(" ").append(CRLF);
-        headers.forEach((k, v) -> {
-            if(k.equals("Host") || k.equals("Accept") || k.equals("Connection")){
-                coreRequestInfo.append(k).append(": ").append(v).append(CRLF);
-            }
-        });
-
-        return coreRequestInfo.toString();
+        return method + " " + path + " " + protocol + " " + CRLF +
+                headers.getOneLineHeaderInfo("Host") +
+                headers.getOneLineHeaderInfo("Accept") +
+                headers.getOneLineHeaderInfo("Connection");
     }
 
     public String getMethod() {

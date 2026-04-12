@@ -1,5 +1,6 @@
 package webserver;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
@@ -15,17 +16,24 @@ public class WebServer {
     public static void main(String[] args) throws Exception {
         int port = getPort(args);
 
-        // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.
+        // TODO: 해당 구조를 잡아야 하는 이유
         try (ServerSocket listenSocket = new ServerSocket(port);
              ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 
             logger.info("Web Application Server started {} port.", port);
 
-            // 클라이언트가 연결될때까지 대기한다.
-            Socket connection;
-            while ((connection = listenSocket.accept()) != null) {
-                executor.execute(new RequestHandler(connection));
+            while (true) {
+                try {
+                    Socket connection = listenSocket.accept();
+
+                    executor.execute(new RequestHandler(connection));
+
+                } catch (IOException ie) {
+                    logger.error("소켓 연결 수락 중 에러 발생 (서버 계속 동작): {}", ie.getMessage());
+                }
             }
+        } catch (IOException ex) {
+            logger.error("서버 부팅 실패 (치명적 에러): {}", ex.getMessage());
         }
     }
 

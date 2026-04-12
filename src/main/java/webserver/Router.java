@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Router {
-private static final Map<String, String> staticUrlMaps = new HashMap<>();
+    private static final Map<String, String> staticUrlMaps = new HashMap<>();
     private static final Map<String, Action> actions = new HashMap<>();
 
     static {

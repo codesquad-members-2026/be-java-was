@@ -9,10 +9,10 @@ import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static utils.HttpConstant.CRLF;
+
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
-    private static final String CRLF = "\r\n";
 
     private final Socket connection;
 
@@ -67,7 +67,7 @@ public class RequestHandler implements Runnable {
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
-            dos.flush();
+            dos.flush(); // TODO: flush를 남겨야 하는 이유 자세히 알아보기
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
