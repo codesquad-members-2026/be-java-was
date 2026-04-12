@@ -80,9 +80,9 @@ public class HttpRequest {
 
     public String getCoreRequestInfo(){
         return method + " " + path + " " + protocol + " " + CRLF +
-                headers.getOneLineHeaderInfo("Host") +
-                headers.getOneLineHeaderInfo("Accept") +
-                headers.getOneLineHeaderInfo("Connection");
+                headers.getOneLineHeaderInfo("host") +
+                headers.getOneLineHeaderInfo("accept") +
+                headers.getOneLineHeaderInfo("connection");
     }
 
     public String getMethod() {
