@@ -2,15 +2,19 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
+
+import action.Action;
+import http.HttpRequest;
+import http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static utils.HttpConstant.CRLF;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
-    private static final String CRLF = "\r\n";
-
-    private Socket connection;
+    private final Socket connection;
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
@@ -25,32 +29,27 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[Client's HTTP Message]");
             HttpRequest httpRequest = HttpRequest.of(br);
+            String method = httpRequest.getMethod();
+            String rawPath = httpRequest.getPath();
             logger.debug(httpRequest.getCoreRequestInfo());
 
-            // TODO: 왜 br은 HttpRequest 에서 사용된 뒤 아래의 코드에서 사용하면 오류가 발생하는지 정리
+            Action action = Router.getAction(method, rawPath);
+            String routedPath = (action != null) ? action.process(httpRequest) : Router.convertStaticPath(rawPath);
 
-            String method = httpRequest.getMethod();
-            String path = httpRequest.getPath();
-            String protocol = httpRequest.getProtocol();
+            HttpResponse httpResponse = HttpResponse.of(routedPath);
+            byte[] body = httpResponse.getBody();
+            logger.debug("[Server's Response Message]");
+            logger.debug(httpResponse.getCoreResponse());
 
-            // TODO: GET/POST/PUT/DELETE 등 분기 처리
-            if(method.equals("GET")){
-                HttpResponse httpResponse = HttpResponse.of(path);
-                byte[] body = httpResponse.getBody();
-                String contentType = httpResponse.getContentType();
-                String statusCode = httpResponse.getStatusCode();
-                logger.debug("[Response Message]");
-                logger.debug(httpResponse.getCoreResponse());
-
-                responseHeader(dos, body.length, contentType, statusCode, protocol);
-                responseBody(dos, body);
-            }
+            responseHeader(dos, body.length,
+                    httpResponse.getContentType(), httpResponse.getStatusCode(), httpRequest.getProtocol());
+            responseBody(dos, body);
 
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }
-
+    // TODO: 분리 필요
     private void responseHeader(DataOutputStream dos, int lengthOfBodyContent,
                                 String contentType, String statusCode, String protocol) throws IOException {
         try {
@@ -68,7 +67,7 @@ public class RequestHandler implements Runnable {
     private void responseBody(DataOutputStream dos, byte[] body) {
         try {
             dos.write(body, 0, body.length);
-            dos.flush();
+            dos.flush(); // TODO: flush를 남겨야 하는 이유 자세히 알아보기
         } catch (IOException e) {
             logger.error(e.getMessage());
         }
