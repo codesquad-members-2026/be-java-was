@@ -1,4 +1,4 @@
-package http;
+package webserver.response;
 
 import java.util.Arrays;
 

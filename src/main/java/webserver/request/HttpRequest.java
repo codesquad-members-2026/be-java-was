@@ -1,4 +1,4 @@
-package http;
+package webserver.request;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -75,6 +75,7 @@ public class HttpRequest {
 
         return allMessages;
     }
+    // TODO: String.lines() / NIO - ByteBuffer 로 바꿔보기
     private static Map<String, String> extractHeaders(BufferedReader br) throws IOException {
         Map<String, String> headers = new HashMap<>();
 

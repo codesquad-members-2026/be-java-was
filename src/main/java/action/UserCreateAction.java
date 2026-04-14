@@ -2,9 +2,9 @@ package action;
 
 import db.Database;
 import exception.DuplicateUserInDBException;
-import http.ResponseData;
+import webserver.response.ResponseData;
 import model.User;
-import http.HttpRequest;
+import webserver.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -4,9 +4,9 @@ import java.io.*;
 import java.net.Socket;
 
 import action.Action;
-import http.HttpRequest;
-import http.HttpResponse;
-import http.ResponseData;
+import webserver.request.HttpRequest;
+import webserver.response.HttpResponse;
+import webserver.response.ResponseData;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

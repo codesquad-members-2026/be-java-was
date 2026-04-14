@@ -1,4 +1,4 @@
-package http;
+package webserver.response;
 
 public record ErrorConfig(
         String path,
