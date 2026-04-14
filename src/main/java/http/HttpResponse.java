@@ -37,7 +37,6 @@ public class HttpResponse {
     }
 
     private static String responseHeader(String contentType, String statusCode, String protocol, int contentLength) {
-
         return protocol + " " + statusCode + CRLF +
                 "Content-Type: " + contentType + CRLF +
                 "Content-Length: " + contentLength + CRLF +

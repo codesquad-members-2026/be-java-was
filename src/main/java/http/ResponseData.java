@@ -15,12 +15,11 @@ public class ResponseData {
     private final byte[] body;
     private final Map<String, String> headers;
 
+    private static final Map<Class<? extends Exception>, ErrorConfig> errors = getErrors();
+
     private static final String HTML_EXTENSION = "html";
     private static final String REDIRECT = "redirect:";
-    private static final String STATIC_PATH = "src/main/resources/static";
-    private static final String PATH_404 = STATIC_PATH + "/status/404.html";
-    private static final String PATH_403 = STATIC_PATH + "/status/403.html";
-    private static final String PATH_500 = STATIC_PATH + "/status/500.html";
+    private static final String STATIC_PATH = "src/main/resources/static/";
 
     private static final Logger logger = LoggerFactory.getLogger(ResponseData.class);
 
@@ -45,33 +44,32 @@ public class ResponseData {
         headers.put("Content-Type", getMime(extension));
         logger.debug("absolutePath: {}", absolutePath);
 
-        // TODO: 어떻게 줄일 수 있는가
         try {
             body = getFileByteData(absolutePath);
             headers.put("Status-Code", StatusCode.OK.getStatusCode());
             return new ResponseData(body, headers);
 
-        } catch (NoSuchFileException ne) {
-            logger.error("{}: not found", ne.getMessage());
-            body = getSafeErrorPage(PATH_404, StatusCode.NOT_FOUND.getStatusCode());
-            headers.put("Status-Code", StatusCode.NOT_FOUND.getStatusCode());
-            headers.put("Content-Type", getMime(HTML_EXTENSION));
-            return new ResponseData(body, headers);
-
-        } catch (AccessDeniedException ae){
-            logger.error("{}: forbidden", ae.getMessage());
-            body = getSafeErrorPage(PATH_403, StatusCode.FORBIDDEN.getStatusCode());
-            headers.put("Status-Code", StatusCode.FORBIDDEN.getStatusCode());
-            headers.put("Content-Type", getMime(HTML_EXTENSION));
-            return new ResponseData(body, headers);
-
         } catch (IOException ie){
-            logger.error("{}: internal server error", ie.getMessage());
-            body = getSafeErrorPage(PATH_500, StatusCode.SERVER_ERROR.getStatusCode());
-            headers.put("Status-Code", StatusCode.SERVER_ERROR.getStatusCode());
+            ErrorConfig errorConfig = errors.getOrDefault(ie.getClass(), errors.get(IOException.class));
+            body = getSafeErrorPage(errorConfig.path(), errorConfig.statusCode());
+            headers.put("Status-Code", errorConfig.statusCode());
             headers.put("Content-Type", getMime(HTML_EXTENSION));
             return new ResponseData(body, headers);
         }
+    }
+
+    private static Map<Class<? extends Exception>, ErrorConfig> getErrors() {
+        Map<Class<? extends Exception>, ErrorConfig> errors = new HashMap<>();
+
+        StatusCode status404 = StatusCode.NOT_FOUND;
+        StatusCode status403 = StatusCode.FORBIDDEN;
+        StatusCode status500 = StatusCode.SERVER_ERROR;
+
+        errors.put(NoSuchFileException.class, new ErrorConfig(status404.getPath(), status404.getStatusCode()));
+        errors.put(AccessDeniedException.class, new ErrorConfig(status403.getPath(), status403.getStatusCode()));
+        errors.put(IOException.class, new ErrorConfig(status500.getPath(), status500.getStatusCode()));
+
+        return errors;
     }
 
     private static byte[] getFileByteData(String absolutePath) throws IOException {
