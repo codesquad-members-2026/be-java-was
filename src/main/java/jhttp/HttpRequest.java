@@ -1,8 +1,10 @@
-package http;
+package jhttp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.InvalidParameterException;
 import java.util.*;
 
@@ -16,6 +18,8 @@ public class HttpRequest {
     private byte[] body;
     private final Map<String, String> header = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
+    private final Map<String, String> bodyParams = new HashMap<>();
+
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
     public HttpRequest(List<String> headers){
@@ -86,5 +90,23 @@ public class HttpRequest {
 
     public String getParam(String key) {
         return params.get(key);
+    }
+
+
+    public void setBodyParams(){
+        String bodyString = new String(this.body);
+        String[] kvPairs = bodyString.split("&");
+        for(String kvPair : kvPairs){
+            String[] keyVal = kvPair.split("=");
+            if(keyVal.length != 2){
+                return;
+            }
+            this.bodyParams.put(URLDecoder.decode(keyVal[0], StandardCharsets.UTF_8),URLDecoder.decode(keyVal[1], StandardCharsets.UTF_8));
+        }
+
+    }
+
+    public String getBodyParam(String key){
+        return this.bodyParams.get(key);
     }
 }

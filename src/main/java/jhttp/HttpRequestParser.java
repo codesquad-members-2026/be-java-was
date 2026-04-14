@@ -1,4 +1,4 @@
-package http;
+package jhttp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +43,9 @@ public class HttpRequestParser {
                 int length = Integer.parseInt(contentLengthString.strip());
                 byte[] body = bis.readNBytes(length);
                 request.setBody(body);
+                if(request.getHeader("Content-Type").equals("application/x-www-form-urlencoded")){
+                    request.setBodyParams();
+                }
             }
 //            logger.debug("{}: MyHttpParser Complete",Thread.currentThread().getName());
 //            logger.debug("{}: Parsed Method : {}",Thread.currentThread().getName(),request.getMethod());
