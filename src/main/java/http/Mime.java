@@ -15,8 +15,8 @@ public enum Mime {
     TXT("txt","text/plain;charset=utf-8"),
     DEFAULT("default", "application/octet-stream");
 
-    private String extension;
-    private String contentType;
+    private final String extension;
+    private final String contentType;
 
     Mime(String extension, String contentType) {
         this.extension = extension;

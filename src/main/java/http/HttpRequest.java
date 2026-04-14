@@ -48,6 +48,7 @@ public class HttpRequest {
         return new HttpRequest(method, path, protocol, allMessages, bodies, params);
     }
 
+    // TODO: 회원가입 폼 데이터 중 빈칸이 들어오면 ArrayIndexOutOfBoundsException 발생
     private static Map<String, String> splitQuery(String query) {
         String[] queryParts = query.split(String.valueOf(PARAMETER_SEPARATOR));
         Map<String, String> result = new HashMap<>();
