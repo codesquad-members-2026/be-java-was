@@ -17,7 +17,8 @@ public class Router {
         staticUrlMaps.put("/register.html", "/registration/register.html");
     
         // 동적 요청 처리
-        actions.put("GET /create", new UserCreateAction());
+        // TODO: DTO 도입?
+        actions.put("POST /create", new UserCreateAction());
     }
 
     public static String convertStaticPath(String originalPath) {

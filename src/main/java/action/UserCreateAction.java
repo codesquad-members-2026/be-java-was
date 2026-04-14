@@ -16,7 +16,7 @@ public class UserCreateAction implements Action {
     @Override
     public String process(HttpRequest request) {
         try {
-            Database.addUser(User.of(request.getParameters()));
+            Database.addUser(User.of(request.getBodies()));
             logger.debug("User created successfully");
             return "/login/login.html";
         } catch (DuplicateUserInDBException de) {
