@@ -1,11 +1,10 @@
- // 원재님의 실제 패키지 명으로 수정하세요!
+package webserver; // 원재님의 실제 패키지 명으로 수정하세요!
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.WebServer;
 
 import java.io.IOException;
 import java.net.URI;
