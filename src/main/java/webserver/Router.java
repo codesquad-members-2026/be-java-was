@@ -6,6 +6,7 @@ import jhttp.HttpResponse;
 import interfaces.HandlerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.session.SessionManager;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
@@ -14,9 +15,11 @@ import java.util.Map;
 public class Router {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
     private final Map<String, HandlerMethod> handlers ;
+    private final SessionManager sessionManager;
 
-    public Router(Map<String, HandlerMethod> injectedHandlers){
+    public Router(Map<String, HandlerMethod> injectedHandlers, SessionManager sm){
         this.handlers = injectedHandlers;
+        this.sessionManager = sm;
     }
 
     public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
