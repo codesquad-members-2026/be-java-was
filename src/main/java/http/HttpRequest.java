@@ -14,6 +14,7 @@ public class HttpRequest {
     private String method;
     private String path;
     private Map<String, String> params = new HashMap<>();
+    private int contentlength;
 
     public HttpRequest(InputStream in) {
         try {
@@ -23,6 +24,11 @@ public class HttpRequest {
 
             parseRequestLine(line);
             parseHeader(br);
+
+            if ("POST".equals(method) && contentlength > 0) {
+                parseBody(br);
+            }
+
         } catch (IOException e) {
             logger.error("HTTP 요청 분석 에러: {}", e.getMessage());
         }
@@ -43,15 +49,32 @@ public class HttpRequest {
             }
         }
     }
-    public String getParameter(String key) {
-        return params.get(key);
-    }
+
 
     private void parseHeader(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
             logger.debug("Header 정보: {}", line);
+
+            if (line.toLowerCase().startsWith("content-length:")) {
+                this.contentlength = Integer.parseInt(line.split(":")[1].trim());
+            }
         }
+    }
+
+    private void parseBody(BufferedReader br) throws IOException {
+        char[] body = new char[contentlength];
+        br.read(body, 0, contentlength);
+
+        String bodyData = new String(body);
+        logger.debug("Body 데이터: {}", bodyData);
+
+        Map<String, String> bodyParams = Parser.parseQueryString(bodyData);
+        this.params.putAll(bodyParams);
+    }
+
+    public String getParameter(String key) {
+        return params.get(key);
     }
 
     public String getMethod() { return method; }

@@ -12,7 +12,6 @@ public class Parser {
         if (queryString == null || queryString.isEmpty()) {
             return new HashMap<>();
         }
-
         Map<String, String> map = new HashMap<>();
         String[] pairs = queryString.split("&");
 
