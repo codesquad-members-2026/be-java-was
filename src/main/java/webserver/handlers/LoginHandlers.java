@@ -2,34 +2,22 @@ package webserver.handlers;
 
 import annotations.RequestMapping;
 import db.Database;
-import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.MimeTypeParser;
 
 import java.io.IOException;
 
 import static auth.JUserAuth.hashPassword;
 
-public class RegistrationHandlers {
-    private static final Logger logger = LoggerFactory.getLogger(RegistrationHandlers.class);
+public class LoginHandlers {
 
+    private static final Logger logger = LoggerFactory.getLogger(LoginHandlers.class);
 
-    @RequestMapping(method = "GET", path = "/registration")
-    public void getRegistrationPage(HttpRequest request, HttpResponse response) throws IOException{
-        response.setStatus("200 OK");
-        response.setHeader("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());
-        byte[] body = FileLoader.getStaticFile("/registration/index.html");
-        response.setHeader("Content-Length",String.valueOf(body.length));
-        response.setResponseBody(body);
-        response.send();
-    }
-
-    @RequestMapping(method = "POST", path ="/create")
-    public void postCreateUserAccount(HttpRequest request, HttpResponse response) throws IOException{
+    @RequestMapping(method = "GET", path ="/login")
+    public void postCreateUserAccount(HttpRequest request, HttpResponse response) throws IOException {
 
         String userId = request.getBodyParam("userID");
         String nickname = request.getBodyParam("nickname");

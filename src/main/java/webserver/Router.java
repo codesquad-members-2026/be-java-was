@@ -20,7 +20,7 @@ public class Router {
     }
 
     public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
-
+        logger.info("{} requested for - {}", request.getMethod(), request.getUrl());
         String signature = extractSignature(request);
         HandlerMethod h = handlers.get(signature);
         if(h == null){
