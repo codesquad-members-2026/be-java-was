@@ -11,10 +11,7 @@ jobs:
   assign-copilot:
     name: "Request Copilot Review"
     runs-on: ubuntu-latest
-    if: |
-      github.event.pull_request.draft == false &&
-      github.event.pull_request.base.ref != 'main' &&
-      github.event.pull_request.labels[0] != null
+    if: github.event.pull_request.draft == false && github.event.pull_request.base.ref != 'main' && toJson(github.event.pull_request.labels) != '[]'
 
     steps:
       - name: Request Copilot as reviewer
