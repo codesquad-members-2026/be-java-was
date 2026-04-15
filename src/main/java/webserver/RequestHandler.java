@@ -2,65 +2,49 @@ package webserver;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import db.Database;
+import action.Action;
+import action.ActionMap;
 import http.HttpRequest;
 import http.HttpResponse;
-import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import util.PathUtil;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
-
     private Socket connection;
-
 
     public RequestHandler(Socket connectionSocket) {
         this.connection = connectionSocket;
     }
 
     public void run() {
+        logger.debug("New Client Connect! IP : {}, Port : {}", connection.getInetAddress(), connection.getPort());
+
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
 
             HttpRequest request = new HttpRequest(in);
+            HttpResponse response = new HttpResponse(out);
+
             String path = request.getPath();
+            int index = path.indexOf("?");
 
-            if (path.equals("/")) {
-                path = "/index.html";
+            if(index != -1) {
+                path = path.substring(0, index);
             }
 
-            if(path.equals("/registration")) {
-                path = "/registration/index.html";
-            }
+            Action action = ActionMap.getAction(path);
 
-            if (path.equals("/user/create")) {
-
-                String userId = request.getParameter("userId");
-                String password = request.getParameter("password");
-                String name = request.getParameter("name");
-                String email = request.getParameter("email");
-
-                User user = new User(userId, password, name, email);
-
-                Database.addUser(user);
-                logger.debug("회원가입 성공: {}", user);
-
-                HttpResponse response = new HttpResponse(out);
-                response.sendRedirect("/index.html");
+            if (action != null) {
+                action.execute(request, response);
                 return;
             }
 
-            byte[] body = Files.readAllBytes(Paths.get("./src/main/resources/static" + path));
-
-            HttpResponse response = new HttpResponse(out);
-            response.forward(path, body);
+            path = PathUtil.normalize(path);
+            response.serveFile(path);
 
         } catch (IOException e) {
-            logger.error("요청 처리 중 예외 발생: {}", e.getMessage());
+            logger.error("요청 처리 중 에러 발생: {}", e.getMessage());
         }
     }
 }
-
