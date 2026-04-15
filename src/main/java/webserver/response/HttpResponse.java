@@ -5,55 +5,43 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.util.Map;
 
 import static utils.HttpConstant.CRLF;
 
 public class HttpResponse {
     private final String header;
-    private final byte[] body;
+    private final InputStream bodyStream;
 
     private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
 
-    private HttpResponse(String header, byte[] body) {
+    private HttpResponse(String header, InputStream bodyStream) {
         this.header = header;
-        this.body = body;
+        this.bodyStream = bodyStream;
     }
 
-    public static HttpResponse of(ResponseData responseData, String protocol) {
-        byte[] body = responseData.getBody();
-        int contentLength = body.length;
-        String header = "";
+    public static HttpResponse of(ResponseData responseData) {
+        String statusCode = responseData.getStatusLine().statusCode();
+        String protocol = responseData.getStatusLine().protocol();
 
-        String statusCode = responseData.getHeaders().get("Status-Code");
-        if(statusCode.equals(StatusCode.FOUND.getStatusCode())) { // redirect
-            String location = responseData.getHeaders().get("Location");
-            header = response302Header(protocol, statusCode, location, contentLength);
-            return new HttpResponse(header, body);
-        }
-
-        String contentType = responseData.getHeaders().get("Content-Type");
-        header = responseHeader(contentType, statusCode, protocol, contentLength);
-        return new HttpResponse(header, body);
+        String header = responseHeader(responseData.getHeaders(), statusCode, protocol);
+        return new HttpResponse(header, responseData.getBodyStream());
     }
 
-    private static String responseHeader(String contentType, String statusCode, String protocol, int contentLength) {
-        return protocol + " " + statusCode + CRLF +
-                "Content-Type: " + contentType + CRLF +
-                "Content-Length: " + contentLength + CRLF +
-                CRLF;
-    }
+    private static String responseHeader(Map<String, String> responseHeaders, String statusCode, String protocol) {
+        StringBuilder result = new StringBuilder();
+        result.append(protocol).append(" ").append(statusCode).append(CRLF);
+        responseHeaders.forEach((key, value) -> result.append(key).append(": ").append(value).append(CRLF));
+        result.append(CRLF);
 
-    private static String response302Header(String protocol, String statusCode, String location, int contentLength){
-        return protocol + " " + statusCode + CRLF +
-                "Location: " + location + CRLF +
-                "Content-Length: " + contentLength + CRLF +
-                CRLF;
+        return result.toString();
     }
 
     public void send(DataOutputStream dos) {
-        try {
+        try (InputStream stream = this.bodyStream) {
             dos.writeBytes(this.header);
-            dos.write(this.body, 0, this.body.length);
+            stream.transferTo(dos);
             dos.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());

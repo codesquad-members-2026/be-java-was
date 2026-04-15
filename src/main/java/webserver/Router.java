@@ -17,11 +17,10 @@ public class Router {
         // 정적 요청 처리
         staticUrlMaps.put("/", ResponseData.of("/index.html"));
 
-        staticUrlMaps.put("/register", ResponseData.of("/user/register.html"));
         staticUrlMaps.put("/registration", ResponseData.of("/user/register.html"));
         staticUrlMaps.put("/register.html", ResponseData.of("/user/register.html"));
 
-        staticUrlMaps.put("/login", ResponseData.of("/user/login.html"));
+        staticUrlMaps.put("/user", ResponseData.of("/user/login.html"));
         staticUrlMaps.put("/login.html", ResponseData.of("/user/login.html"));
     
         // 동적 요청 처리

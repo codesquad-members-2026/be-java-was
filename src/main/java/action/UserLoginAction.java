@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
 
+import java.util.UUID;
+
 public class UserLoginAction implements Action {
 
     private static final Logger logger = LoggerFactory.getLogger(UserLoginAction.class);
@@ -27,6 +29,7 @@ public class UserLoginAction implements Action {
         }
 
         logger.debug("User login successfully");
-        return ResponseData.of("redirect:/");
+        String sessionId = "JSESSIONID=" + UUID.randomUUID() + "; Path=/";
+        return ResponseData.of("redirect:/").addHeader("Set-Cookie", sessionId);
     }
 }
