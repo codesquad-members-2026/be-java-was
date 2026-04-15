@@ -1,7 +1,8 @@
-package http;
+package jhttp;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.MimeTypeParser;
 
 import java.io.BufferedOutputStream;
 
@@ -20,7 +21,7 @@ public class HttpResponse {
 
     public HttpResponse(OutputStream out){
         this.out = new DataOutputStream(new BufferedOutputStream(out));
-        this.headers.put("Content-Type","text/html;charset=utf-8");
+        this.headers.put("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());
     }
 
     public String getStatus() {

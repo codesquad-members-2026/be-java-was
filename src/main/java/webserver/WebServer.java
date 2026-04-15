@@ -24,7 +24,6 @@ public class WebServer {
 
     public static void main(String args[]) throws Exception {
 //        Map<String, HandlerMethod> dynamicHandlers = ComponentScanner.scanHandlers("webserver.handlers");
-        // TODO : CHANGE PACKAGE AND CLASS NAMES
         Map<String, HandlerMethod> dynamicHandlers = ComponentScannerWithoutGemini.loadHandlers("webserver/handlers");
         Router router = new Router(dynamicHandlers);
 

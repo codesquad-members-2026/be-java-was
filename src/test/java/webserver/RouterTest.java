@@ -2,8 +2,8 @@ package webserver;
 
 import org.junit.jupiter.api.Test;
 import interfaces.HandlerMethod;
-import http.HttpRequest;
-import http.HttpResponse;
+import jhttp.HttpRequest;
+import jhttp.HttpResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

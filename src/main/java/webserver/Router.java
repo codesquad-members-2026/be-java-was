@@ -1,8 +1,8 @@
 package webserver;
 
 import fileIO.FileLoader;
-import http.HttpRequest;
-import http.HttpResponse;
+import jhttp.HttpRequest;
+import jhttp.HttpResponse;
 import interfaces.HandlerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,18 +24,16 @@ public class Router {
         String signature = extractSignature(request);
         HandlerMethod h = handlers.get(signature);
         if(h == null){
-            logger.debug("Searching For Static Files for Request : {} at {}", request.getMethod(), request.getUrl());
             returnStaticFiles(request,response);
             return;
         }
-        logger.debug("Called Handler for Request : {} {}", request.getMethod(), request.getUrl());
         h.handle(request, response);
     }
 
     private void returnStaticFiles(HttpRequest request, HttpResponse response) {
         if(!request.getMethod().equals("GET")){
             response.setStatus("400 Bad Request");
-            logger.debug("Sending 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
+            logger.error("Sending 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         }
         String url = request.getUrl();
@@ -46,12 +44,10 @@ public class Router {
             response.setHeader("Content-Type", MimeTypeParser.getContentType(MimeTypeParser.extractExtension(url)));
             response.setHeader("Content-Length", String.valueOf(file.length));
             response.setResponseBody(file);
-            logger.debug("Sending 200 Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         } catch (IOException e) {
-            logger.debug(e.getMessage());
-            response.setStatus("400 Bad Request");
-            logger.debug("Exception Caused 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
+            response.setStatus("404 Not Found");
+            logger.error("Exception Caused 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
             response.send();
         }
 

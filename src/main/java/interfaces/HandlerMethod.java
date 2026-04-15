@@ -1,7 +1,7 @@
 package interfaces;
 
-import http.HttpRequest;
-import http.HttpResponse;
+import jhttp.HttpRequest;
+import jhttp.HttpResponse;
 
 import java.lang.reflect.InvocationTargetException;
 

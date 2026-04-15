@@ -3,9 +3,9 @@ package webserver;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.Socket;
-import http.HttpRequest;
-import http.HttpRequestParser;
-import http.HttpResponse;
+import jhttp.HttpRequest;
+import jhttp.HttpRequestParser;
+import jhttp.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +21,7 @@ public class RequestHandler implements Runnable {
     }
 
     public void run() {
-        logger.debug("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
+        logger.info("New Client Connect! Connected IP : {}, Port : {}", connection.getInetAddress(),
                 connection.getPort());
 
         try (InputStream in = connection.getInputStream();
@@ -29,7 +29,6 @@ public class RequestHandler implements Runnable {
 
             HttpRequest newRequest = HttpRequestParser.parse(in);
             HttpResponse newResponse = new HttpResponse(out);
-            logger.debug("MyHttpRequest is null? : {}", newRequest == null);
             if (newRequest == null) return;
             try {
                 router.handleRequest(newRequest, newResponse);
@@ -40,7 +39,6 @@ public class RequestHandler implements Runnable {
             }
 
         } catch (IOException e) {
-            logger.debug("IO EXCEPTION POPPED");
             logger.error(e.getMessage());
         }
     }
