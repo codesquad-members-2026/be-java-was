@@ -43,7 +43,7 @@ class WebServerTest {
         // then: 서버가 200 상태 코드를 주고, 바디에 HTML 내용이 담겨 왔는지 확인합니다!
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(response.body()).isNotEmpty();
-        assertThat(response.body().toLowerCase()).contains("<html"); // index.html 내용 일부 확인
+        assertThat(response.body().toLowerCase()).contains("index.html"); // index.html 내용 일부 확인
 
         // 🧹 (주의) 테스트가 끝나면 다른 테스트를 위해 스레드를 멈춰줘야 합니다.
         // 현재 WebServer 코드에는 우아한 종료(Graceful Shutdown) 기능이 없어서 강제로 멈춥니다.

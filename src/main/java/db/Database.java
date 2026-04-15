@@ -20,4 +20,12 @@ public class Database {
     public static Collection<User> findAll() {
         return users.values();
     }
+
+    public static boolean isExistUserById(String userId) {
+        return users.containsKey(userId);
+    }
+
+    public static boolean checkPasswordMatching(String userId, String password) {
+        return findUserById(userId).getPassword().equals(password);
+    }
 }
