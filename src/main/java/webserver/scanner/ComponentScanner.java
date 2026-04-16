@@ -24,8 +24,8 @@ public class ComponentScanner {
                 if(m.isAnnotationPresent(RequestMapping.class)){
                     RequestMapping annotation = m.getAnnotation(RequestMapping.class);
                     String sig = annotation.method() + " " + annotation.path();
-                    HandlerMethod newHandler = (req, res, sessionManager) -> {
-                       m.invoke(controllerInstance, req,res);
+                    HandlerMethod newHandler = (req, res, sessionManager, ta) -> {
+                       return m.invoke(controllerInstance, req,res);
                     };
                     handlers.put(sig, newHandler);
                 }

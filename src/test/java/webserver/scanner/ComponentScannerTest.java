@@ -21,7 +21,7 @@ class ComponentScannerTest {
         // 3. Assert: Check for specific routes you KNOW exist in MainPageHandlers and RegistrationHandlers
         assertTrue(handlers.containsKey("GET /"), "Should find root path handler");
         assertTrue(handlers.containsKey("GET /registration"), "Should find registration handler");
-        assertTrue(handlers.containsKey("GET /create"), "Should find create user handler");
+        assertTrue(handlers.containsKey("POST /create"), "Should find create user handler");
 
         // 4. Assert: Check that a fake route doesn't exist
         assertFalse(handlers.containsKey("POST /fake-path"));

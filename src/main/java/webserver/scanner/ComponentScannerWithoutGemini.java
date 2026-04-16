@@ -6,6 +6,7 @@ import webserver.session.Session;
 
 import java.io.*;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
 import java.lang.reflect.Parameter;
@@ -50,12 +51,26 @@ public class ComponentScannerWithoutGemini {
         }
         for (Class<?> c : classes) {
 
+            Method[] methodCandidates = c.getDeclaredMethods();
+            boolean hasAnnotation = false;
+            for(Method m : methodCandidates){
+                if(m.isAnnotationPresent(RequestMapping.class)){
+                    hasAnnotation = true;
+                    break;
+                }
+            }
+
+            if(!hasAnnotation){
+                continue;
+            }
+
             try {
-                Object handlerInstance = c.getDeclaredConstructor().newInstance();
+                Constructor<?> declaredConstructor = c.getDeclaredConstructor();
+                declaredConstructor.setAccessible(true);
+                Object handlerInstance = declaredConstructor.newInstance();
 
                 Method[] methods = c.getDeclaredMethods();
                 for (Method m : methods) {
-
 
                     if (m.isAnnotationPresent(RequestMapping.class)) {
                         RequestMapping annotation = m.getAnnotation(RequestMapping.class);
@@ -66,7 +81,7 @@ public class ComponentScannerWithoutGemini {
                         Class<?>[] params = m.getParameterTypes();
                         Object[] args = new Object[params.length];
 
-                        HandlerMethod h = (req, res, sessionManager) -> {
+                        HandlerMethod h = (req, res, sessionManager, ta) -> {
                             for(int i=0; i < params.length; i++){
                                 if(params[i].getSimpleName().equals("HttpRequest")){
                                     args[i] = req;
@@ -79,14 +94,17 @@ public class ComponentScannerWithoutGemini {
                                     Session session = sessionManager.getSession(sid);
                                     args[i] = session;
                                 }
+                                else if(params[i].getSimpleName().equals("TemplateAttributes")){
+                                    args[i] = ta;
+                                }
                                 else if(params[i].getSimpleName().equals("SessionManager")){
-                                    args[i] = req.getSessionManager();
+                                    args[i] = sessionManager;
                                 }
                                 else{
                                     throw new InvalidClassException("NOT SUPPORTED PARAMETER SCANNED");
                                 }
                             }
-                            m.invoke(handlerInstance, args);
+                            return m.invoke(handlerInstance, args);
                         };
                         result.put(method + " " + url, h);
                     }

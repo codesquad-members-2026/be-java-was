@@ -22,24 +22,25 @@ public class LoginHandlers {
     private static final Logger logger = LoggerFactory.getLogger(LoginHandlers.class);
 
     @RequestMapping(method = "GET", path ="/login")
-    public void getLoginPage(HttpResponse response) throws IOException {
+    public String getLoginPage(HttpResponse response) throws IOException {
         response.sendHtml("/login/index.html");
+        return null;
     }
 
     @RequestMapping(method = "POST", path ="/login")
-    public void postLoginRequest(HttpRequest request, HttpResponse response, SessionManager sessionManager) throws IOException {
+    public String postLoginRequest(HttpRequest request, HttpResponse response, SessionManager sessionManager) throws IOException {
         String id = request.getBodyParam("userID");
         String password = request.getBodyParam("password");
         User possibleUser = Database.findUserById(id);
 
         if(id.isEmpty() || password.isEmpty() || possibleUser == null){
             response.sendRedirect("/login/failed.html");
-            return;
+            return null;
         }
 
         if(!checkPassword(possibleUser.getPassword(), password)){
             response.sendRedirect("/login/failed.html");
-            return;
+            return null;
         }
 
         Session newSession = sessionManager.createNewSession();
@@ -47,6 +48,8 @@ public class LoginHandlers {
         newSession.addAttribute("user",possibleUser);
         response.setHeader("Set-Cookie", "SID="+newSession.getId()+";"+" Path=/; Max-Age=300; HttpOnly");
         response.sendRedirect("/");
+
+        return "/main/tempalteVersion.html";
     }
 
 }

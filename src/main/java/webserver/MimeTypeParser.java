@@ -20,8 +20,8 @@ public class MimeTypeParser {
         SVG("svg",  "image/svg+xml"),
         OCTET("bin","application/octet-stream");
 
-        private String contentType;
-        private String fileExtension;
+        private final String contentType;
+        private final String fileExtension;
 
         private MimeType(String fileExtension, String contentType){
             this.fileExtension = fileExtension;

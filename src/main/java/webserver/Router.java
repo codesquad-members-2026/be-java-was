@@ -4,9 +4,11 @@ import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
 import interfaces.HandlerMethod;
+import model.TemplateAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.session.SessionManager;
+import webserver.template.Jhymeleaf;
 
 import java.io.IOException;
 import java.io.InvalidClassException;
@@ -24,16 +26,21 @@ public class Router {
         this.sessionManager = sm;
     }
 
-    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, InvalidClassException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
         logger.info("{} requested for - {}", request.getMethod(), request.getUrl());
         String signature = extractSignature(request);
+        TemplateAttributes templateAttributes = new TemplateAttributes();
         HandlerMethod h = handlers.get(signature);
-        request.setSessionManage(sessionManager);
         if(h == null){
             returnStaticFiles(request,response);
             return;
         }
-        h.handle(request, response, sessionManager);
+        Object result = h.handle(request, response, sessionManager, templateAttributes);
+        if(result != null){
+            response.setResponseBody(Jhymeleaf.fillTemplate((String) result, templateAttributes));
+            response.setHeader("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());
+            response.send();
+        }
     }
 
     private void returnStaticFiles(HttpRequest request, HttpResponse response) {

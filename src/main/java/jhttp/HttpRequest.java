@@ -15,17 +15,15 @@ public class HttpRequest {
     // TODO : TURNING FIELDS INTO CLASS SO THAT WORK CAN BE DONE BY EACH OF THEM
     // TODO : BUSINESS LOGIC CAN BE FREED OF UNRELATED WORKS
 
-    // TODO : ADD SESSION
-
     private String method;
     private String url;
     private byte[] body;
     private final Map<String, String> header = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
     private final Map<String, String> bodyParams = new HashMap<>();
-
-    private Session session = null;
-    private SessionManager sessionManager = null;
+//
+//    private Session session = null;
+//    private SessionManager sessionManager = null;
 
 
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
@@ -131,22 +129,22 @@ public class HttpRequest {
         return this.bodyParams.get(key);
     }
 
-
-    public void setSession(Session s){
-        this.session = s;
-    }
-
-    public Session getSession(){
-        return  this.session;
-    }
-
-
-    public void setSessionManage(SessionManager sm){
-        this.sessionManager = sm;
-    }
-
-    public SessionManager getSessionManager(){
-        return this.sessionManager;
-    }
+//
+//    public void setSession(Session s){
+//        this.session = s;
+//    }
+//
+//    public Session getSession(){
+//        return  this.session;
+//    }
+//
+//
+//    public void setSessionManage(SessionManager sm){
+//        this.sessionManager = sm;
+//    }
+//
+//    public SessionManager getSessionManager(){
+//        return this.sessionManager;
+//    }
 
 }
