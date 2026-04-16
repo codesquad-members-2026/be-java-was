@@ -6,6 +6,7 @@ import http.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import session.SessionManager;
 
 import java.io.IOException;
 
@@ -26,13 +27,17 @@ public class UserLoginAction implements Action{
         String userPassword = request.getParameter("password");
 
         User user = Database.findUserById(userId);
+        SessionManager sessionManager = SessionManager.getInstance();
 
         if (user != null && userPassword.equals(user.getPassword())) {
         logger.debug("로그인 성공: {}", userId);
+
+        String sid = sessionManager.createSession(user);
+        response.addHeader("Set-Cookie", "SID=" + sid + "; Path=/");
         response.sendRedirect("/index.html");
         return;
         }
         logger.debug("로그인 실패: {}", userId);
-        response.sendRedirect("/login/index.html");
+        response.sendRedirect("/user/login_failed.html");
     }
 }

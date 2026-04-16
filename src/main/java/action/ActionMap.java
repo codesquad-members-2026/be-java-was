@@ -11,6 +11,7 @@ public class ActionMap {
 
         map.put("/user/create", new UserCreateAction());
         map.put("/user/login", new UserLoginAction());
+        map.put("/user/logout", new UserLogoutAction());
     }
 
     public static Action getAction(String path) {
