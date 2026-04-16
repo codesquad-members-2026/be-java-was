@@ -35,6 +35,10 @@ public class HttpResponse {
         bodyBuffer.write(bytes);
     }
 
+    public int getStatusCode() {
+        return statusCode;
+    }
+
     public void flush() throws IOException {
         int contentLength = bodyBuffer.size();
         dos.writeBytes("HTTP/1.1 " + statusCode + " " + getResponsePhrase(statusCode) + CRLF);
