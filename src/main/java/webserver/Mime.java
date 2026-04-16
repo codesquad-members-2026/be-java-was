@@ -3,8 +3,8 @@ package webserver;
 import java.util.HashMap;
 import java.util.Map;
 
-public enum ContentType {
-    HTML("text/html;charset=utf-8"),
+public enum Mime {
+    HTML("text/html; charset=utf-8"),
     CSS("text/css; charset=utf-8"),
     JS("text/javascript; charset=utf-8"),
     ICO("image/x-icon"),
@@ -16,15 +16,15 @@ public enum ContentType {
 
     private String contentType;
 
-    private static final Map<String, ContentType> CONTENT_TYPE_MAP = new HashMap<>();
+    private static final Map<String, Mime> CONTENT_TYPE_MAP = new HashMap<>();
 
     static {
-        for (ContentType value : ContentType.values()) {
+        for (Mime value : Mime.values()) {
             CONTENT_TYPE_MAP.put(value.name(), value);
         }
     }
 
-    public static ContentType getContentType(String ext) {
+    public static Mime getMime(String ext) {
         if (ext == null || ext.isEmpty()) {
             return DEFAULT;
         }
@@ -33,7 +33,7 @@ public enum ContentType {
     }
 
 
-    ContentType(String contentType) {
+    Mime(String contentType) {
         this.contentType = contentType;
     }
 
