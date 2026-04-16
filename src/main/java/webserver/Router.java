@@ -5,6 +5,7 @@ import action.UserCreateAction;
 import action.UserLoginAction;
 import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
+import webserver.session.SessionManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,14 +30,28 @@ public class Router {
         actions.put("POST /login", new UserLoginAction());
     }
 
-    public static ResponseData convertStaticPath(HttpRequest httpRequest) {
-        String originalPath = httpRequest.getPath();
+    public static ResponseData makeResponseData(HttpRequest httpRequest) {
+        Action action = getAction(httpRequest);
+        ResponseData result = (action != null) ?
+                action.process(httpRequest) : convertStaticPath(httpRequest);
+        return result.addProtocol(httpRequest.getStartLine().protocol());
+    }
+
+    private static ResponseData convertStaticPath(HttpRequest httpRequest) {
+        String originalPath = httpRequest.getStartLine().path();
+
+        // 쿠키 체크 // index.html로 온 경우
+        String sessionId = httpRequest.getHeaders().getSessionId();
+        if(SessionManager.isValid(sessionId) && (originalPath.equals("/") || originalPath.equals("/index.html"))){
+            originalPath = "/main/index.html";
+        }
+
         return staticUrlMaps.getOrDefault(originalPath, ResponseData.of(originalPath));
     }
 
-    public static Action getAction(HttpRequest httpRequest) {
-        String method = httpRequest.getMethod();
-        String path = httpRequest.getPath();
+    private static Action getAction(HttpRequest httpRequest) {
+        String method = httpRequest.getStartLine().method();
+        String path = httpRequest.getStartLine().path();
         return actions.get(method + " " + path);
     }
 }

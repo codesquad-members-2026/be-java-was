@@ -70,8 +70,9 @@ public class ResponseData {
         this.headers.put(key, value);
         return this;
     }
-    public void addProtocol(String protocol) {
+    public ResponseData addProtocol(String protocol) {
         this.statusLine = new StatusLine(this.statusLine.statusCode(), protocol);
+        return this;
     }
 
     private static Map<Class<? extends Exception>, ErrorConfig> getErrors() {

@@ -9,10 +9,8 @@ import java.util.*;
 import static utils.HttpConstant.CRLF;
 
 public class HttpRequest {
-    private final String method;
-    private final String path;
-    private final String protocol;
-    private final HttpHeaders headers;
+    private final StartLine startLine;
+    private final RequestHeaders headers;
     private final Map<String, String> bodies;
     private final Map<String, String> parameters;
 
@@ -20,32 +18,31 @@ public class HttpRequest {
     private static final Character KEY_VALUE_SEPARATOR = '=';
     private static final Character PARAMETER_SEPARATOR = '&';
 
-    private HttpRequest(String method, String path, String protocol,
-                        Map<String, String> headers, Map<String, String> bodies, Map<String, String> parameters) {
-        this.method = method;
-        this.path = path;
-        this.protocol = protocol;
-        this.headers = new HttpHeaders(headers);
+    private HttpRequest(StartLine startLine, Map<String, String> headers,
+                        Map<String, String> bodies, Map<String, String> parameters) {
+        this.startLine = startLine;
+        this.headers = new RequestHeaders(headers);
         this.bodies = bodies;
         this.parameters = parameters;
     }
 
     public static HttpRequest of(BufferedReader br) throws IOException {
-        List<String> startLine = Arrays.stream(br.readLine().split(" ")).toList();
-        String method = startLine.get(0);
-        String originPath = startLine.get(1);
+        String[] startLineSplits = br.readLine().split(" ");
+        String method = startLineSplits[0];
+        String originPath = startLineSplits[1];
+        String protocol = startLineSplits[2];
 
         String[] pathSplits = originPath.split(QUERY_SEPARATOR);
         String path = pathSplits[0];
         Map<String, String> params = pathSplits.length > 1 ? splitQuery(pathSplits[1]) : new HashMap<>();
 
-        String protocol = startLine.get(2);
-
         Map<String, String> allMessages = extractHttpMessage(br);
         String body = allMessages.get("body");
         Map<String, String> bodies = body.isEmpty() ? new HashMap<>() : splitQuery(body);
         allMessages.remove("body");
-        return new HttpRequest(method, path, protocol, allMessages, bodies, params);
+
+        StartLine startLine = new StartLine(method, path, protocol);
+        return new HttpRequest(startLine, allMessages, bodies, params);
     }
 
     // TODO: 회원가입 폼 데이터 중 빈칸이 들어오면 ArrayIndexOutOfBoundsException 발생
@@ -75,7 +72,6 @@ public class HttpRequest {
 
         return allMessages;
     }
-    // TODO: String.lines() / NIO - ByteBuffer 로 바꿔보기
     private static Map<String, String> extractHeaders(BufferedReader br) throws IOException {
         Map<String, String> headers = new HashMap<>();
 
@@ -103,7 +99,7 @@ public class HttpRequest {
     }
 
     public String getStartLineInfo(){
-        return method + " " + path + " " + protocol + " " + CRLF;
+        return this.startLine.method() + " " + this.startLine.path() + " " + this.startLine.protocol() + " " + CRLF;
     }
     public String getCoreRequestInfo(){
         return getStartLineInfo() +
@@ -112,14 +108,11 @@ public class HttpRequest {
                 headers.getOneLineHeaderInfo("connection");
     }
 
-    public String getMethod() {
-        return method;
+    public StartLine getStartLine(){
+        return this.startLine;
     }
-    public String getPath() {
-        return path;
-    }
-    public String getProtocol() {
-        return protocol;
+    public RequestHeaders getHeaders() {
+        return this.headers;
     }
     public Map<String, String> getParameters() {
         return parameters;
