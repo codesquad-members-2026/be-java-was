@@ -13,8 +13,13 @@ public class ResourceRenderer {
     private static final Logger logger = LoggerFactory.getLogger(ResourceRenderer.class);
 
     public void render(String resource, HttpResponse response) throws IOException {
+        if (resource.startsWith("redirect:")) {
+            String location = resource.substring("redirect:".length());
+            response.sendRedirect(location);
+            return;
+        }
+
         File file = new File("src/main/resources/static" + resource);
-        logger.debug("렌더링 시도: src/main/resources/static{}", resource);
 
         byte[] body = null;
 

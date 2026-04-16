@@ -1,6 +1,5 @@
 package webserver;
 
-import handler.UserHandler;
 import java.io.IOException;
 import java.util.List;
 import org.slf4j.Logger;
@@ -29,6 +28,7 @@ public class ServletManager {
             HttpServlet servlet = request.isStaticResource() ? staticResourceServlet : dispatcherServlet;
             servlet.service(request, response);
         } catch (PageNotFoundException e) {
+            // todo: response 조작 한 곳에서만
             response.setStatusCode(404);
             errorServlet.service(request, response);
         } catch (Exception e) {
