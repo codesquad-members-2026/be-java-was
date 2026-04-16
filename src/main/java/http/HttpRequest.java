@@ -15,6 +15,7 @@ public class HttpRequest {
     private String path;
     private Map<String, String> params = new HashMap<>();
     private int contentlength;
+    private Map<String, String> cookies = new HashMap<>();
 
     public HttpRequest(InputStream in) {
         try {
@@ -27,6 +28,11 @@ public class HttpRequest {
 
             if ("POST".equals(method) && contentlength > 0) {
                 parseBody(br);
+            }
+
+            if (line.startsWith("Cookie:")) {
+                String real = line.substring(7).trim();
+                Parser.parseCookies(real, cookies);
             }
 
         } catch (IOException e) {
@@ -50,7 +56,6 @@ public class HttpRequest {
         }
     }
 
-
     private void parseHeader(BufferedReader br) throws IOException {
         String line;
         while ((line = br.readLine()) != null && !line.isEmpty()) {
@@ -73,10 +78,9 @@ public class HttpRequest {
         this.params.putAll(bodyParams);
     }
 
-    public String getParameter(String key) {
-        return params.get(key);
-    }
 
+    public String getCookie(String name) {return cookies.get(name);}
+    public String getParameter(String key) {return params.get(key);}
     public String getMethod() { return method; }
     public String getPath() { return path; }
 }
