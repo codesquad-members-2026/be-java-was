@@ -1,28 +1,29 @@
 package http;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import util.FileUtil;
 import util.MimeType;
 import java.io.*;
 
 public class HttpResponse {
+    private static Logger logger = LoggerFactory.getLogger(HttpResponse.class);
     private DataOutputStream dos;
+    private static final String BASIC_PATH = "./src/main/resources/static";
 
     public HttpResponse(OutputStream out) {
         this.dos = new DataOutputStream(out);
     }
 
     public void forward(String path, byte[] body) throws IOException {
-        // 1. 확장자에 따라 MIME Type 결정 (아까 만든 로직 활용!)
         String contentType = MimeType.getMime(path);
+        responseBody("200 OK", contentType, body);
+    }
 
-        // 2. 헤더 작성
-        dos.writeBytes("HTTP/1.1 200 OK \r\n");
-        dos.writeBytes("Content-Type: " + contentType + "\r\n"); // 이게 핵심!
-        dos.writeBytes("Content-Length: " + body.length + "\r\n");
-        dos.writeBytes("\r\n");
-
-        // 3. 본문 전송
-        dos.write(body, 0, body.length);
-        dos.flush();
+    public void sendNotFound() throws IOException {
+        File file = new File(BASIC_PATH + "/error/404.html");
+        byte[] body = FileUtil.readFile(file);
+        responseBody("404 Not Found", "text/html", body);
     }
 
     public void sendRedirect(String url) throws IOException {
@@ -31,5 +32,26 @@ public class HttpResponse {
         dos.writeBytes("\r\n");
         dos.flush();
     }
+
+    public void serveFile(String path) throws IOException {
+        File file = new File(BASIC_PATH + path);
+        if (file.exists() && file.isFile()) {
+            byte[] body = FileUtil.readFile(file);
+            forward(path, body);
+        } else {
+            sendNotFound();
+            logger.error("파일을 찾을 수 없습니다: {}", path);
+        }
+    }
+    private void responseBody(String status, String contentType, byte[] body) throws IOException {
+        dos.writeBytes("HTTP/1.1 " + status + "\r\n");
+        dos.writeBytes("Content-Type: " + contentType + "\r\n");
+        dos.writeBytes("Content-Length: " + body.length + "\r\n");
+        dos.writeBytes("\r\n");
+
+        dos.write(body, 0, body.length);
+        dos.flush();
+    }
+
 
 }
