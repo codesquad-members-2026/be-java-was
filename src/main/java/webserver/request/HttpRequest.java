@@ -105,7 +105,8 @@ public class HttpRequest {
         return getStartLineInfo() +
                 headers.getOneLineHeaderInfo("host") +
                 headers.getOneLineHeaderInfo("accept") +
-                headers.getOneLineHeaderInfo("connection");
+                headers.getOneLineHeaderInfo("connection") +
+                headers.getOneLineHeaderInfo("cookie");
     }
 
     public StartLine getStartLine(){

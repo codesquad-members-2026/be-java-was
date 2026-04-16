@@ -3,6 +3,7 @@ package webserver;
 import action.Action;
 import action.UserCreateAction;
 import action.UserLoginAction;
+import action.UserLogoutAction;
 import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
 import webserver.session.SessionManager;
@@ -28,6 +29,7 @@ public class Router {
         // 동적 요청 처리
         actions.put("POST /create", new UserCreateAction());
         actions.put("POST /login", new UserLoginAction());
+        actions.put("POST /logout", new UserLogoutAction());
     }
 
     public static ResponseData makeResponseData(HttpRequest httpRequest) {
