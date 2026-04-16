@@ -28,13 +28,11 @@ public class RequestHandler implements Runnable {
 
             logger.debug("[Client's HTTP Message]");
             HttpRequest httpRequest = HttpRequest.of(br);
-            String method = httpRequest.getMethod();
-            String rawPath = httpRequest.getPath();
             logger.debug(httpRequest.getCoreRequestInfo());
 
-            Action action = Router.getAction(method, rawPath);
+            Action action = Router.getAction(httpRequest);
             ResponseData responseData = (action != null)
-                    ? action.process(httpRequest) : Router.convertStaticPath(rawPath);
+                    ? action.process(httpRequest) : Router.convertStaticPath(httpRequest);
             responseData.addProtocol(httpRequest.getProtocol());
             logger.debug("[Server's Response Data]");
             logger.debug(responseData.toString());

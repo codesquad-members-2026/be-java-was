@@ -30,6 +30,6 @@ public class UserLoginAction implements Action {
 
         logger.debug("User login successfully");
         String sessionId = "JSESSIONID=" + UUID.randomUUID() + "; Path=/";
-        return ResponseData.of("redirect:/").addHeader("Set-Cookie", sessionId);
+        return ResponseData.of("redirect:/main/index.html").addHeader("Set-Cookie", sessionId);
     }
 }

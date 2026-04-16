@@ -3,6 +3,7 @@ package webserver;
 import action.Action;
 import action.UserCreateAction;
 import action.UserLoginAction;
+import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
 
 import java.util.HashMap;
@@ -28,11 +29,14 @@ public class Router {
         actions.put("POST /login", new UserLoginAction());
     }
 
-    public static ResponseData convertStaticPath(String originalPath) {
+    public static ResponseData convertStaticPath(HttpRequest httpRequest) {
+        String originalPath = httpRequest.getPath();
         return staticUrlMaps.getOrDefault(originalPath, ResponseData.of(originalPath));
     }
 
-    public static Action getAction(String method, String path){
+    public static Action getAction(HttpRequest httpRequest) {
+        String method = httpRequest.getMethod();
+        String path = httpRequest.getPath();
         return actions.get(method + " " + path);
     }
 }

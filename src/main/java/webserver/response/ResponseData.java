@@ -70,7 +70,6 @@ public class ResponseData {
         this.headers.put(key, value);
         return this;
     }
-
     public void addProtocol(String protocol) {
         this.statusLine = new StatusLine(this.statusLine.statusCode(), protocol);
     }
@@ -88,6 +87,7 @@ public class ResponseData {
 
         return errors;
     }
+
     private static byte[] getFileByteData(String absolutePath) throws IOException {
         File file = new File(absolutePath);
         return Files.readAllBytes(file.toPath());
