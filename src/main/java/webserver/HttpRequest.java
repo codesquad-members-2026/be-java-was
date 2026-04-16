@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class HttpRequest {
-    private String method;
+    private String method; // todo: enum 고려
     private String path;
     private String protocol;
     private final Map<String, String> queryParameters = new HashMap<>();

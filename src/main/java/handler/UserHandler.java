@@ -4,26 +4,26 @@ import db.Database;
 import java.util.Map;
 import model.User;
 import webserver.HttpRequest;
-import webserver.annotation.Mapping;
+import webserver.annotation.GetMapping;
 
 public class UserHandler {
 
-    @Mapping("/")
+    @GetMapping("/")
     public String home() {
         return "/index.html";
     }
 
-    @Mapping("/main")
+    @GetMapping("/main")
     public String mainPage() {
         return "/index.html";
     }
 
-    @Mapping("/registration")
+    @GetMapping("/registration")
     public String registerForm() {
         return "/registration/index.html";
     }
 
-    @Mapping("/user/create")
+    @GetMapping("/user/create")
     public String register(HttpRequest request) {
         Map<String, String> queryParameters = request.getQueryParameters();
 

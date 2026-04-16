@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.servlet.DispatcherServlet;
 import webserver.servlet.ErrorServlet;
+import webserver.servlet.HandlerMappings;
 import webserver.servlet.HttpServlet;
 import webserver.servlet.ResourceRenderer;
 import webserver.servlet.StaticResourceServlet;
@@ -19,7 +20,7 @@ public class ServletManager {
 
     public ServletManager(ResourceRenderer renderer, List<Object> handlers) {
         staticResourceServlet = new StaticResourceServlet(renderer);
-        dispatcherServlet = new DispatcherServlet(renderer, handlers);
+        dispatcherServlet = new DispatcherServlet(renderer, new HandlerMappings(handlers));
         errorServlet = new ErrorServlet(renderer);
     }
 
