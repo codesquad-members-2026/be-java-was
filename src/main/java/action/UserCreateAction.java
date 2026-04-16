@@ -2,8 +2,9 @@ package action;
 
 import db.Database;
 import exception.DuplicateUserInDBException;
+import webserver.response.ResponseData;
 import model.User;
-import http.HttpRequest;
+import webserver.request.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,14 +15,14 @@ public class UserCreateAction implements Action {
     public UserCreateAction(){}
 
     @Override
-    public String process(HttpRequest request) {
+    public ResponseData process(HttpRequest request) {
         try {
-            Database.addUser(User.of(request.getParameters()));
+            Database.addUser(User.of(request.getBodies()));
             logger.debug("User created successfully");
-            return "/login/login.html";
+            return ResponseData.of("redirect:/index.html");
         } catch (DuplicateUserInDBException de) {
             logger.error("User already exists");
-            return "/registration/register.html";
+            return ResponseData.of("redirect:/registration/register.html");
         }
     }
 }

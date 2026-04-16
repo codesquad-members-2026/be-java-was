@@ -18,11 +18,11 @@ public class User {
         this.email = email;
     }
 
-    public static User of(Map<String, String> params) {
-        String tempUserId = params.get("userId");
-        String tempUserPassword = params.get("password");
-        String tempUserName = params.get("name");
-        String tempUserEmail = params.get("email");
+    public static User of(Map<String, String> bodies) {
+        String tempUserId = bodies.get("userId");
+        String tempUserPassword = bodies.get("password");
+        String tempUserName = bodies.get("name");
+        String tempUserEmail = bodies.get("email");
 
         if(Database.findUserById(tempUserId) == null) {
             return new User(tempUserId, tempUserPassword, tempUserName, tempUserEmail);
@@ -34,15 +34,12 @@ public class User {
     public String getUserId() {
         return userId;
     }
-
     public String getPassword() {
         return password;
     }
-
     public String getName() {
         return name;
     }
-
     public String getEmail() {
         return email;
     }

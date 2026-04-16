@@ -1,7 +1,8 @@
 package action;
 
-import http.HttpRequest;
+import webserver.request.HttpRequest;
+import webserver.response.ResponseData;
 
 public interface Action {
-    String process(HttpRequest request);
+    ResponseData process(HttpRequest request);
 }
