@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import webserver.session.SessionManager;
 
 import java.io.IOException;
+import java.io.InvalidClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -17,15 +18,17 @@ public class Router {
     private final Map<String, HandlerMethod> handlers ;
     private final SessionManager sessionManager;
 
+
     public Router(Map<String, HandlerMethod> injectedHandlers, SessionManager sm){
         this.handlers = injectedHandlers;
         this.sessionManager = sm;
     }
 
-    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, InvalidClassException {
         logger.info("{} requested for - {}", request.getMethod(), request.getUrl());
         String signature = extractSignature(request);
         HandlerMethod h = handlers.get(signature);
+        request.setSessionManage(sessionManager);
         if(h == null){
             returnStaticFiles(request,response);
             return;

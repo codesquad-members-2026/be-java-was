@@ -2,13 +2,11 @@ package webserver.handlers;
 
 import annotations.RequestMapping;
 import db.Database;
-import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.MimeTypeParser;
 
 import java.io.IOException;
 
@@ -19,7 +17,7 @@ public class RegistrationHandlers {
 
 
     @RequestMapping(method = "GET", path = "/registration")
-    public void getRegistrationPage(HttpRequest request, HttpResponse response) throws IOException{
+    public void getRegistrationPage(HttpResponse response) throws IOException{
         response.sendHtml("/registration/index.html");
     }
 

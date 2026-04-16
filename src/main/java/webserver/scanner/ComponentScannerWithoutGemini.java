@@ -7,6 +7,7 @@ import java.io.*;
 
 import java.lang.reflect.Method;
 
+import java.lang.reflect.Parameter;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -53,13 +54,36 @@ public class ComponentScannerWithoutGemini {
 
                 Method[] methods = c.getDeclaredMethods();
                 for (Method m : methods) {
+
+
                     if (m.isAnnotationPresent(RequestMapping.class)) {
                         RequestMapping annotation = m.getAnnotation(RequestMapping.class);
                         String method = annotation.method();
                         String url = annotation.path();
 
+
+                        Class<?>[] params = m.getParameterTypes();
+                        Object[] args = new Object[params.length];
+
                         HandlerMethod h = (req, res) -> {
-                            m.invoke(handlerInstance, req, res);
+                            for(int i=0; i < params.length; i++){
+                                if(params[i].getSimpleName().equals("HttpRequest")){
+                                    args[i] = req;
+                                }
+                                else if(params[i].getSimpleName().equals("HttpResponse")){
+                                    args[i] = res;
+                                }
+                                else if(params[i].getSimpleName().equals("Session")){
+                                    args[i] = req.getSession();
+                                }
+                                else if(params[i].getSimpleName().equals("SessionManager")){
+                                    args[i] = req.getSessionManager();
+                                }
+                                else{
+                                    throw new InvalidClassException("NOT SUPPORTED PARAMETER SCANNED");
+                                }
+                            }
+                            m.invoke(handlerInstance, args);
                         };
                         result.put(method + " " + url, h);
                     }
