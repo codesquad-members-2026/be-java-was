@@ -1,64 +1,65 @@
 package webserver;
 
-
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HttpResponse {
-    private static final Logger logger = LoggerFactory.getLogger(HttpResponse.class);
+    private static final String CRLF = "\r\n";
 
-    public static void response(HttpRequest request, DataOutputStream dos) throws IOException {
+    private final DataOutputStream dos;
+    private final ByteArrayOutputStream bodyBuffer = new ByteArrayOutputStream();
+    private int statusCode = 200;
+    private String contentType = "text/html; charset=UTF-8";
+    private String location;
 
-        String method = request.getMethod();
-        String path = request.getPath();
-
-        File file = new File("src/main/resources/static" + path);
-
-        byte[] body = path.getBytes();
-
-        if (file.exists() && file.isFile()) {
-            body = Files.readAllBytes(file.toPath());
-            logger.debug("success to read: {}", request.getPath());
-        }
-
-        String extension = getExtension(path);
-
-        responseHeader(dos, ContentType.getContentType(extension), body.length);
-        responseBody(dos, body);
+    public HttpResponse(DataOutputStream dos) {
+        this.dos = dos;
     }
 
-
-    private static void responseHeader(DataOutputStream dos, ContentType contentType,
-                                       int lengthOfBodyContent) {
-        try {
-            dos.writeBytes("HTTP/1.1 200 OK \r\n");
-            dos.writeBytes("Content-Type: " + contentType.getContentType() + "\r\n");
-            dos.writeBytes("Content-Length: " + lengthOfBodyContent + "\r\n");
-            dos.writeBytes("\r\n");
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public void setStatusCode(int statusCode) {
+        this.statusCode = statusCode;
     }
 
-    private static void responseBody(DataOutputStream dos, byte[] body) {
-        try {
-            dos.write(body, 0, body.length);
-            dos.flush();
-        } catch (IOException e) {
-            logger.error(e.getMessage());
-        }
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
     }
 
-    private static String getExtension(String path) {
-        if (path == null || path.lastIndexOf(".") == -1) {
-            return  "";
-        }
+    public void sendRedirect(String location) {
+        setStatusCode(302);
+        this.location = location;
+    }
 
-        return path.substring(path.lastIndexOf(".") + 1);
+    public void write(byte[] bytes) throws IOException {
+        bodyBuffer.write(bytes);
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    public void flush() throws IOException {
+        int contentLength = bodyBuffer.size();
+        dos.writeBytes("HTTP/1.1 " + statusCode + " " + getResponsePhrase(statusCode) + CRLF);
+        if (statusCode == 302) {
+            dos.writeBytes("Location: " + location + CRLF);
+        }
+        dos.writeBytes("Content-Type: " + contentType + CRLF);
+        dos.writeBytes("Content-Length: " + contentLength + CRLF);
+        dos.writeBytes(CRLF);
+        dos.write(bodyBuffer.toByteArray());
+        dos.flush();
+    }
+
+    private String getResponsePhrase(int statusCode) {
+        //todo: 상태코드 분리
+        return switch (statusCode) {
+            case 200 -> "OK";
+            case 302 -> "Found";
+            case 404 -> "Not Found";
+            case 500 -> "Internal Server Error";
+            default -> "Unknown Status";
+        };
     }
 
 }
