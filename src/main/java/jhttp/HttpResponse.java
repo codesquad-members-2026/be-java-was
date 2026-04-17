@@ -1,5 +1,6 @@
 package jhttp;
 
+import fileIO.FileLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.MimeTypeParser;
@@ -67,5 +68,25 @@ public class HttpResponse {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+
+    public void sendRedirect(String url){
+        this.setStatus("302 Found");
+        this.setHeader("Location",url);
+        this.send();
+    }
+
+    public void sendHtml(String fileName) throws IOException {
+        this.setStatus("200 OK");
+        this.setHeader("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());
+        byte[] body = FileLoader.getStaticFile(fileName);
+        this.setHeader("Content-Length",String.valueOf(body.length));
+        this.setResponseBody(body);
+        this.send();
+    }
+
+    public void setSessionInvalidateHeader(String sessionID) throws IOException {
+        this.setHeader("Set-Cookie", "SID="+ sessionID +"; Path=/; Max-Age=0; HttpOnly");
     }
 }

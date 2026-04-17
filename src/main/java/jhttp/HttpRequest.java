@@ -19,6 +19,10 @@ public class HttpRequest {
     private final Map<String, String> header = new HashMap<>();
     private final Map<String, String> params = new HashMap<>();
     private final Map<String, String> bodyParams = new HashMap<>();
+//
+//    private Session session = null;
+//    private SessionManager sessionManager = null;
+
 
     private static final Logger logger = LoggerFactory.getLogger(HttpRequest.class);
 
@@ -97,7 +101,7 @@ public class HttpRequest {
         String bodyString = new String(this.body);
         String[] kvPairs = bodyString.split("&");
         for(String kvPair : kvPairs){
-            String[] keyVal = kvPair.split("=");
+            String[] keyVal = kvPair.split("=",2);
             if(keyVal.length != 2){
                 return;
             }
@@ -106,7 +110,39 @@ public class HttpRequest {
 
     }
 
+    public String getSessionID(){
+        String cookieString = this.header.get("Cookie");
+        if(cookieString == null) return "";
+        String[] cookies = cookieString.split(";");
+        for(String cookie : cookies){
+            if(cookie.contains("SID=")){
+                String[] crumbs = cookie.split("=",2);
+                return crumbs[1].strip();
+            }
+        }
+        return "";
+    }
+
     public String getBodyParam(String key){
         return this.bodyParams.get(key);
     }
+
+//
+//    public void setSession(Session s){
+//        this.session = s;
+//    }
+//
+//    public Session getSession(){
+//        return  this.session;
+//    }
+//
+//
+//    public void setSessionManage(SessionManager sm){
+//        this.sessionManager = sm;
+//    }
+//
+//    public SessionManager getSessionManager(){
+//        return this.sessionManager;
+//    }
+
 }

@@ -1,38 +1,132 @@
 package webserver;
 
-import org.junit.jupiter.api.Test;
+import fileIO.FileLoader;
 import interfaces.HandlerMethod;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
+import model.TemplateAttributes;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+import webserver.session.SessionManager;
+
+import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import static org.junit.jupiter.api.Assertions.*;
+
+import static org.mockito.Mockito.*;
 
 class RouterTest {
 
+    private Map<String, HandlerMethod> mockHandlers;
+    private SessionManager mockSessionManager;
+    private Router router;
+
+    @BeforeEach
+    void setUp() {
+        mockHandlers = new HashMap<>();
+        mockSessionManager = mock(SessionManager.class);
+        router = new Router(mockHandlers, mockSessionManager);
+    }
+
     @Test
-    void handleRequest_ShouldCallCorrectHandler() throws Exception {
-        // 1. Arrange: Create a fake Map and a flag to track if it was called
-        boolean[] wasCalled = {false};
-        Map<String, HandlerMethod> fakeHandlers = new HashMap<>();
+    @DisplayName("Routes correctly to a dynamically registered handler")
+    void handleRequest_WithRegisteredHandler() throws Exception {
+        // given
+        HttpRequest request = mock(HttpRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+        HandlerMethod mockHandler = mock(HandlerMethod.class);
+        TemplateAttributes mockTemplateAtts = mock(TemplateAttributes.class);
 
-        // Put a fake lambda in the map that just flips our boolean flag
-        fakeHandlers.put("GET /test", (req, res) -> {
-            wasCalled[0] = true;
-        });
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getUrl()).thenReturn("/test");
 
-        Router router = new Router(fakeHandlers);
+        // Register the handler for the exact signature "GET /test"
+        mockHandlers.put("GET /test", mockHandler);
 
-        // NOTE: You will need to create dummy instances of MyHttpRequest and MyHttpResponse here.
-        // Assuming you have a way to manually construct them for tests:
-        HttpRequest mockRequest = new HttpRequest(List.of("GET /test HTTP/1.1"));
-        HttpResponse mockResponse = new HttpResponse(null);
+        // when
+        router.handleRequest(request, response);
 
-        // 2. Act: Tell the router to handle it
-        router.handleRequest(mockRequest, mockResponse);
+        // then
 
-        // 3. Assert: Did the router actually invoke our fake lambda?
-        assertTrue(wasCalled[0], "The handler for GET /test was never called!");
+        verify(mockHandler).handle(request, response, mockSessionManager,mockTemplateAtts); // verifies the handler took over
+    }
+
+    @Test
+    @DisplayName("Returns 200 OK and sends file when no handler exists but a static file is found")
+    void handleRequest_StaticFileFound() throws Exception {
+        // given
+        HttpRequest request = mock(HttpRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getUrl()).thenReturn("/index.html");
+
+        byte[] fakeFileContent = "<html>Hello</html>".getBytes();
+
+        try (MockedStatic<FileLoader> mockedFileLoader = mockStatic(FileLoader.class);
+             MockedStatic<MimeTypeParser> mockedMimeParser = mockStatic(MimeTypeParser.class)) {
+
+            mockedFileLoader.when(() -> FileLoader.getStaticFile("/index.html")).thenReturn(fakeFileContent);
+            mockedMimeParser.when(() -> MimeTypeParser.extractExtension("/index.html")).thenReturn("html");
+            mockedMimeParser.when(() -> MimeTypeParser.getContentType("html")).thenReturn("text/html");
+
+            // when
+            router.handleRequest(request, response);
+
+            // then
+            verify(response).setStatus("200 OK");
+            verify(response).setHeader("Content-Type", "text/html");
+            verify(response).setHeader("Content-Length", String.valueOf(fakeFileContent.length));
+            verify(response).setResponseBody(fakeFileContent);
+            verify(response).send();
+        }
+    }
+
+    @Test
+    @DisplayName("Returns 404 Not Found when a static file does not exist")
+    void handleRequest_StaticFileNotFound() throws Exception {
+        // given
+        HttpRequest request = mock(HttpRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+
+        when(request.getMethod()).thenReturn("GET");
+        when(request.getUrl()).thenReturn("/unknown.html");
+
+        try (MockedStatic<FileLoader> mockedFileLoader = mockStatic(FileLoader.class)) {
+            // Force an IOException to simulate file not found
+            mockedFileLoader.when(() -> FileLoader.getStaticFile("/unknown.html")).thenThrow(new IOException());
+
+            // when
+            router.handleRequest(request, response);
+
+            // then
+            verify(response).setStatus("404 Not Found");
+            verify(response).send();
+        }
+    }
+
+    @Test
+    @DisplayName("Returns 400 Bad Request for unregistered non-GET routes")
+    void handleRequest_UnregisteredNonGetMethod() throws Exception {
+        // given
+        HttpRequest request = mock(HttpRequest.class);
+        HttpResponse response = mock(HttpResponse.class);
+
+        when(request.getMethod()).thenReturn("POST");
+        when(request.getUrl()).thenReturn("/static-target-that-only-accepts-get");
+
+        try (MockedStatic<FileLoader> mockedFileLoader = mockStatic(FileLoader.class)) {
+            // Force an IOException to simulate fallback logic execution
+            mockedFileLoader.when(() -> FileLoader.getStaticFile(anyString())).thenThrow(new IOException());
+
+            // when
+            router.handleRequest(request, response);
+
+            // then
+            verify(response).setStatus("400 Bad Request");
+            verify(response, atLeastOnce()).send();
+        }
     }
 }
