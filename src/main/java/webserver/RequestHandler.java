@@ -8,7 +8,6 @@ import jhttp.HttpRequestParser;
 import jhttp.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.session.SessionManager;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
@@ -36,6 +35,8 @@ public class RequestHandler implements Runnable {
             } catch (InvocationTargetException e) {
                 throw new RuntimeException(e);
             } catch (IllegalAccessException e) {
+                throw new RuntimeException(e);
+            } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
 

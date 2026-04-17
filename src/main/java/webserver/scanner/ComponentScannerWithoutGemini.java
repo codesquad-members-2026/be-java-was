@@ -9,7 +9,6 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import java.lang.reflect.Parameter;
 import java.net.URISyntaxException;
 import java.net.URL;
 
@@ -79,9 +78,10 @@ public class ComponentScannerWithoutGemini {
 
 
                         Class<?>[] params = m.getParameterTypes();
-                        Object[] args = new Object[params.length];
+
 
                         HandlerMethod h = (req, res, sessionManager, ta) -> {
+                            Object[] args = new Object[params.length];
                             for(int i=0; i < params.length; i++){
                                 if(params[i].getSimpleName().equals("HttpRequest")){
                                     args[i] = req;

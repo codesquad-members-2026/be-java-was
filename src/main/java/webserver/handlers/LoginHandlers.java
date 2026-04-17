@@ -5,6 +5,7 @@ import db.Database;
 import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
+import model.TemplateAttributes;
 import model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import webserver.session.SessionManager;
 import java.io.IOException;
 
 import static auth.JUserAuth.checkPassword;
-import static auth.JUserAuth.hashPassword;
+
 
 public class LoginHandlers {
 
@@ -47,9 +48,10 @@ public class LoginHandlers {
         logger.info("New Session in Memory  SID = {}", newSession.getId());
         newSession.addAttribute("user",possibleUser);
         response.setHeader("Set-Cookie", "SID="+newSession.getId()+";"+" Path=/; Max-Age=300; HttpOnly");
-        response.sendRedirect("/");
-
-        return "/main/tempalteVersion.html";
+        response.setStatus("302 Found");
+        response.setHeader("location","/user/list");
+        response.send();
+        return null;
     }
 
 }

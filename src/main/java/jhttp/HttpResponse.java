@@ -86,8 +86,7 @@ public class HttpResponse {
         this.send();
     }
 
-    public void sendInvalidSessionResponse(String sessionID, String redirectUrl) throws IOException {
+    public void setSessionInvalidateHeader(String sessionID) throws IOException {
         this.setHeader("Set-Cookie", "SID="+ sessionID +"; Path=/; Max-Age=0; HttpOnly");
-        this.sendHtml("/login");
     }
 }

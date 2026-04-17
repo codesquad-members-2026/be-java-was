@@ -18,12 +18,9 @@ public class MainPageHandlers {
 
     @RequestMapping(method = "GET", path = "/")
     public String getFrontPage(HttpRequest request, HttpResponse response, Session session, TemplateAttributes templateAttributes) throws IOException {
-        if(session == null){
-            logger.debug("NULL IN LOGIN SESSION");
-            response.sendInvalidSessionResponse(request.getSessionID(),"/");
-            return null;
+        if(session != null){
+            templateAttributes.setAttribute("userID", ((User)session.getAttribute("user")).getName());
         }
-        templateAttributes.setAttribute("userID", ((User)session.getAttribute("user")).getName());
         return "/main/templateVersion.html";
     }
 
@@ -31,7 +28,8 @@ public class MainPageHandlers {
     public String logoutRedirectToFrontPage(HttpRequest request, HttpResponse response, SessionManager sessionManager) throws IOException {
         String sessionID = request.getSessionID();
         sessionManager.removeSession(sessionID);
-        response.sendInvalidSessionResponse(request.getSessionID(),"/");
+        response.setSessionInvalidateHeader(sessionID);
+        response.sendRedirect("/");
         return null;
     }
 

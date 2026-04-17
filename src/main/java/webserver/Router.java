@@ -11,7 +11,6 @@ import webserver.session.SessionManager;
 import webserver.template.Jhymeleaf;
 
 import java.io.IOException;
-import java.io.InvalidClassException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 
@@ -26,7 +25,7 @@ public class Router {
         this.sessionManager = sm;
     }
 
-    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException {
+    public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         logger.info("{} requested for - {}", request.getMethod(), request.getUrl());
         String signature = extractSignature(request);
         TemplateAttributes templateAttributes = new TemplateAttributes();

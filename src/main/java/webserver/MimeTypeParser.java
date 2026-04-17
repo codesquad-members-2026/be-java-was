@@ -1,8 +1,5 @@
 package webserver;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class MimeTypeParser {
 
 

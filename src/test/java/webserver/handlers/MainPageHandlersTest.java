@@ -2,6 +2,7 @@ package webserver.handlers;
 
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
+import model.TemplateAttributes;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import webserver.session.Session;
@@ -21,9 +22,10 @@ class MainPageHandlersTest {
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
         Session session = mock(Session.class);
+        TemplateAttributes mockTemplateAtts = mock(TemplateAttributes.class);
 
         // when
-        mainPageHandlers.getFrontPage(request, response, session);
+        mainPageHandlers.getFrontPage(request, response, session,mockTemplateAtts);
 
         // then
         verify(response).sendHtml("/index.html");
@@ -36,11 +38,11 @@ class MainPageHandlersTest {
         // given
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
-
+        TemplateAttributes mockTemplateAtts = mock(TemplateAttributes.class);
         when(request.getSessionID()).thenReturn("expired-session-id");
 
         // when
-        mainPageHandlers.getFrontPage(request, response, null);
+        mainPageHandlers.getFrontPage(request, response, null,mockTemplateAtts);
 
         // then
         verify(response).setHeader(eq("Set-Cookie"), contains("Max-Age=0")); // Verifies cookie deletion

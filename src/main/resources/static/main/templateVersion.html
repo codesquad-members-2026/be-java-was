@@ -14,6 +14,7 @@
     <a href="/main"><img src="../img/signiture.svg" /></a>
     <ul class="header__menu" style="align-items: center;">
 
+      {{jh#if userID}}
       <li class="header__menu__item">
             <span style="font-weight: 600; color: #333; margin-right: 10px;">
               환영합니다, {{ userID }}님!
@@ -31,6 +32,18 @@
           </button>
         </form>
       </li>
+      {{/if}}
+
+      {{jh#ifNot userID}}
+          <li class="header__menu__item">
+            <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+          </li>
+          <li class="header__menu__item">
+            <a class="btn btn_ghost btn_size_s" href="/registration">
+              회원 가입
+            </a>
+          </li>
+      {{/ifNot}}
 
     </ul>
   </header>

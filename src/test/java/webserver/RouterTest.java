@@ -4,6 +4,7 @@ import fileIO.FileLoader;
 import interfaces.HandlerMethod;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
+import model.TemplateAttributes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +37,7 @@ class RouterTest {
         HttpRequest request = mock(HttpRequest.class);
         HttpResponse response = mock(HttpResponse.class);
         HandlerMethod mockHandler = mock(HandlerMethod.class);
+        TemplateAttributes mockTemplateAtts = mock(TemplateAttributes.class);
 
         when(request.getMethod()).thenReturn("GET");
         when(request.getUrl()).thenReturn("/test");
@@ -47,8 +49,8 @@ class RouterTest {
         router.handleRequest(request, response);
 
         // then
-        verify(request).setSessionManage(mockSessionManager);
-        verify(mockHandler).handle(request, response, mockSessionManager); // verifies the handler took over
+
+        verify(mockHandler).handle(request, response, mockSessionManager,mockTemplateAtts); // verifies the handler took over
     }
 
     @Test
