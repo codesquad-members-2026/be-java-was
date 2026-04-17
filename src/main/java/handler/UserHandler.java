@@ -1,10 +1,14 @@
 package handler;
 
 import db.Database;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.Map;
 import model.User;
 import webserver.HttpRequest;
 import webserver.annotation.GetMapping;
+import webserver.annotation.PostMapping;
 
 public class UserHandler {
 
@@ -23,13 +27,15 @@ public class UserHandler {
         return "/registration/index.html";
     }
 
-    @GetMapping("/user/create")
+    @PostMapping("/user/create")
     public String register(HttpRequest request) {
-        Map<String, String> queryParameters = request.getQueryParameters();
+        byte[] body = request.getBody();
+        Map<String, String> keyValue = new HashMap<>();
+        request.parseUrlEncodedParams(new String(body, StandardCharsets.UTF_8), keyValue);
 
-        String userId = queryParameters.get("userId");
-        String password = queryParameters.get("password");
-        String name = queryParameters.get("name");
+        String userId = keyValue.get("userId");
+        String password = keyValue.get("password");
+        String name = keyValue.get("name");
         User newUser = new User(userId, password, name, null);
 
         Database.addUser(newUser);

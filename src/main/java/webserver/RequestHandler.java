@@ -1,5 +1,6 @@
 package webserver;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -37,9 +38,9 @@ public class RequestHandler implements Runnable {
     private void process() throws IOException {
         try (InputStream in = connection.getInputStream(); OutputStream out = connection.getOutputStream()) {
             DataOutputStream dos = new DataOutputStream(out);
-            BufferedReader br = new BufferedReader(new InputStreamReader(in));
+            BufferedInputStream reader = new BufferedInputStream(in);
 
-            HttpRequest request = HttpRequest.from(br);
+            HttpRequest request = HttpRequest.from(reader);
             HttpResponse response = new HttpResponse(dos);
 
             logger.debug("HTTP 요청: {}", request);
