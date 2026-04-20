@@ -6,7 +6,7 @@ import action.UserLoginAction;
 import action.UserLogoutAction;
 import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
-import webserver.session.SessionManager;
+import session.SessionManager;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,14 +19,13 @@ public class Router {
     static {
         // 정적 요청 처리
         staticUrlMaps.put("/", ResponseData.of("/index.html"));
-
         staticUrlMaps.put("/registration", ResponseData.of("/user/register.html"));
         staticUrlMaps.put("/register.html", ResponseData.of("/user/register.html"));
-
         staticUrlMaps.put("/user", ResponseData.of("/user/login.html"));
         staticUrlMaps.put("/login.html", ResponseData.of("/user/login.html"));
     
         // 동적 요청 처리
+        // TODO: Servlet 사용?
         actions.put("POST /create", new UserCreateAction());
         actions.put("POST /login", new UserLoginAction());
         actions.put("POST /logout", new UserLogoutAction());
@@ -35,11 +34,11 @@ public class Router {
     public static ResponseData makeResponseData(HttpRequest httpRequest) {
         Action action = getAction(httpRequest);
         ResponseData result = (action != null) ?
-                action.process(httpRequest) : convertStaticPath(httpRequest);
+                action.process(httpRequest) : getStaticPath(httpRequest);
         return result.addProtocol(httpRequest.getStartLine().protocol());
     }
 
-    private static ResponseData convertStaticPath(HttpRequest httpRequest) {
+    private static ResponseData getStaticPath(HttpRequest httpRequest) {
         String originalPath = httpRequest.getStartLine().path();
 
         // 쿠키 체크 // index.html로 온 경우

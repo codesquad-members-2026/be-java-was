@@ -14,7 +14,6 @@ public class RequestHeaders {
     }
 
     private String extractSessionId(String cookies){
-        // TODO: Map의 get()이 실패하면 null?
         if(cookies == null || cookies.isEmpty()){
             return "";
         }

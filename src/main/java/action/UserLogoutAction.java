@@ -4,7 +4,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.request.HttpRequest;
 import webserver.response.ResponseData;
-import webserver.session.SessionManager;
+import session.SessionManager;
 
 public class UserLogoutAction implements Action {
 
