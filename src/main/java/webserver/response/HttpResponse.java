@@ -3,7 +3,6 @@ package webserver.response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -24,10 +23,10 @@ public class HttpResponse {
     }
 
     public static HttpResponse of(ResponseData responseData) {
-        String statusCode = responseData.getStatusLine().statusCode();
-        String protocol = responseData.getStatusLine().protocol();
+        String header = responseHeader(responseData.getHeaders(),
+                responseData.getStatusLine().statusCode(),
+                responseData.getStatusLine().protocol());
 
-        String header = responseHeader(responseData.getHeaders(), statusCode, protocol);
         return new HttpResponse(header, responseData.getBodyStream());
     }
 
