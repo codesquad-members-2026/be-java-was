@@ -59,22 +59,23 @@ public class HttpRequest {
         return result;
     }
     private static String readLine(InputStream in) throws IOException {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        int b;
-        while((b = in.read()) != -1){
-            if(b == '\n'){break;}
-            if(b != '\r'){bos.write(b);}
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream();){
+            int b;
+            while((b = in.read()) != -1){
+                if(b == '\n'){break;}
+                if(b != '\r'){bos.write(b);}
+            }
+            if(bos.size() == 0 && b == -1){
+                throw new EOFException("Failed to read line: Connection closed by client.");
+            }
+            return bos.toString(StandardCharsets.UTF_8);
         }
-        if(bos.size() == 0 && b == -1){
-            throw new EOFException("Failed to read line: Connection closed by client.");
-        }
-        return bos.toString(StandardCharsets.UTF_8);
     }
     private static Map<String, String> extractHeaders(InputStream in) throws IOException {
         Map<String, String> headers = new HashMap<>();
 
         String line;
-        while((line = readLine(in)) != null && !line.isEmpty()){
+        while(!(line = readLine(in)).isEmpty()){
             String[] headerSplits = line.split(":", 2);
             if(headerSplits.length == 2){
                 headers.put(headerSplits[0].trim().toLowerCase(), headerSplits[1].trim());

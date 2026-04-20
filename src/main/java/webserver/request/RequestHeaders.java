@@ -1,19 +1,32 @@
 package webserver.request;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static utils.HttpConstant.CRLF;
 
 public class RequestHeaders {
     private final Map<String, String> headers;
+    private final String sessionId;
 
     public RequestHeaders(Map<String, String> headers) {
-        Map<String, String> lowerCaseHeaders = new HashMap<>();
-        for (Map.Entry<String, String> entry : headers.entrySet()) {
-            lowerCaseHeaders.put(entry.getKey().toLowerCase(), entry.getValue());
+        this.headers = headers;
+        this.sessionId = extractSessionId(headers.get("cookie"));
+    }
+
+    private String extractSessionId(String cookies){
+        // TODO: Map의 get()이 실패하면 null?
+        if(cookies == null || cookies.isEmpty()){
+            return "";
         }
-        this.headers = Map.copyOf(lowerCaseHeaders);
+
+        String[] cookiesArray = cookies.split(";");
+        for(String cookie : cookiesArray){
+            if(cookie.trim().startsWith("JSESSIONID")){
+                return cookie.split("=")[1];
+            }
+        }
+
+        return "";
     }
 
     public String getHeader(String key){
@@ -23,22 +36,7 @@ public class RequestHeaders {
         String value = getHeader(key);
         return value != null ? (key + ": " + value + CRLF) : "";
     }
-    // TODO: JVM 싱크 문제 해결
     public String getSessionId(){
-        String cookies; // TODO: 여기에 Breaking Point 걸면 그냥 넘어감
-        cookies = headers.get("cookie");
-
-        if(cookies == null)
-            return "";
-
-        String[] cookiesArray = cookies.split(";");
-
-        for(String cookie : cookiesArray){
-            if(cookie.startsWith("JSESSIONID")){
-                return cookie.split("=")[1];
-            }
-        }
-
-        return "";
+        return sessionId;
     }
 }
