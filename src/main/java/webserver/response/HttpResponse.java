@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
 import static utils.HttpConstant.CRLF;
@@ -38,11 +40,17 @@ public class HttpResponse {
         return result.toString();
     }
 
-    public void send(DataOutputStream dos) {
-        try (InputStream stream = this.bodyStream) {
-            dos.writeBytes(this.header);
-            stream.transferTo(dos);
-            dos.flush();
+    public void send(OutputStream out) {
+        try {
+            out.write(this.header.getBytes(StandardCharsets.UTF_8));
+
+            if(this.bodyStream != null) {
+                try (InputStream stream = this.bodyStream) {
+                    stream.transferTo(out);
+                }
+            }
+
+            out.flush();
         } catch (IOException e) {
             logger.error(e.getMessage());
         }

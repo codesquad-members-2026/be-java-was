@@ -21,12 +21,12 @@ public class RequestHandler implements Runnable {
     public void run() {
         logger.debug("New Client Connect! Connected IP : {}, Port : {}",
                 connection.getInetAddress(), connection.getPort());
-
-        try (BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-             DataOutputStream dos = new DataOutputStream(connection.getOutputStream())) {
+        
+        try (InputStream in = connection.getInputStream();
+             OutputStream out = connection.getOutputStream()) {
             logger.debug("[Client's HTTP Message]");
 
-            HttpRequest httpRequest = HttpRequest.of(br);
+            HttpRequest httpRequest = HttpRequest.of(in);
             logger.debug(httpRequest.getCoreRequestInfo());
 
             ResponseData responseData = Router.makeResponseData(httpRequest);
@@ -34,10 +34,12 @@ public class RequestHandler implements Runnable {
             logger.debug(responseData.toString());
 
             HttpResponse httpResponse = HttpResponse.of(responseData);
-            httpResponse.send(dos);
+            httpResponse.send(out);
 
+        } catch (EOFException e){
+            logger.debug("Client disconnected: {}", e.getMessage());
         } catch (IOException e) {
-            logger.error(e.getMessage());
+            logger.error("I/O error occurred", e);
         }
     }
 }
