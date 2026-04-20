@@ -3,12 +3,8 @@ package webserver.response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.file.AccessDeniedException;
-import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Map;
@@ -91,7 +87,18 @@ public class ResponseData {
 
     private static byte[] getFileByteData(String absolutePath) throws IOException {
         File file = new File(absolutePath);
-        return Files.readAllBytes(file.toPath());
+
+        try (FileInputStream fis = new FileInputStream(file);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            byte[] buffer = new byte[8192];
+            int readLength;
+
+            while((readLength = fis.read(buffer)) != -1){
+                bos.write(buffer, 0, readLength);
+            }
+
+            return bos.toByteArray();
+        }
     }
     private static byte[] getSafeErrorPage(String errorPagePath, String fallBackMessage) {
         try {
