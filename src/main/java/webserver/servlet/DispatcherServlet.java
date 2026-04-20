@@ -4,15 +4,18 @@ import java.io.IOException;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
 import webserver.PageNotFoundException;
+import webserver.session.SessionManager;
 
 public class DispatcherServlet implements HttpServlet {
     private final HandlerMappings handlerMappings;
     private final ResourceRenderer renderer;
+    private final SessionManager sessionManager;
 
-    public DispatcherServlet(ResourceRenderer renderer, HandlerMappings handlerMappings) {
+    public DispatcherServlet(ResourceRenderer renderer, HandlerMappings handlerMappings,
+                             SessionManager sessionManager) {
         this.handlerMappings = handlerMappings;
         this.renderer = renderer;
-
+        this.sessionManager = sessionManager;
     }
 
     @Override
@@ -24,7 +27,7 @@ public class DispatcherServlet implements HttpServlet {
             throw new PageNotFoundException("페이지를 찾을 수 없음: ");
         }
 
-        String resource = handlerMethod.execute(request, response);
+        String resource = handlerMethod.execute(request, response, sessionManager);
         renderer.render(resource, response);
     }
 }

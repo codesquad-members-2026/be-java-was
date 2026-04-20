@@ -3,6 +3,8 @@ package webserver.servlet;
 import java.lang.reflect.Method;
 import webserver.HttpRequest;
 import webserver.HttpResponse;
+import webserver.session.Session;
+import webserver.session.SessionManager;
 
 public class HandlerMethod {
     private Object handler;
@@ -14,7 +16,7 @@ public class HandlerMethod {
     }
 
     // todo: 반환 타입 Object로 변경 후 분기 처리 & 동적 파라미터 개선
-    public String execute(HttpRequest request, HttpResponse response) {
+    public String execute(HttpRequest request, HttpResponse response, SessionManager sessionManager) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         Object[] args = new Object[parameterTypes.length];
 
@@ -24,6 +26,8 @@ public class HandlerMethod {
                 args[i] = request;
             } else if (parameterType == HttpResponse.class) {
                 args[i] = response;
+            } else if (parameterType == Session.class) {
+                args[i] = sessionManager.get(request);
             } else {
                 throw new IllegalArgumentException("지원하지 않는 파라미터: " + parameterType.getName());
             }

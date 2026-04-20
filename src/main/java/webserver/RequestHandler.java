@@ -1,26 +1,27 @@
 package webserver;
 
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.Socket;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import webserver.util.HttpRequestParser;
 
 public class RequestHandler implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(RequestHandler.class);
 
     private final Socket connection;
     private final ServletManager servletManager;
+    private final HttpRequestParser requestParser;
 
-    public RequestHandler(Socket connectionSocket, ServletManager servletManager) {
+    public RequestHandler(Socket connectionSocket, ServletManager servletManager, HttpRequestParser requestParser) {
         this.connection = connectionSocket;
         this.servletManager = servletManager;
+        this.requestParser = requestParser;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class RequestHandler implements Runnable {
             DataOutputStream dos = new DataOutputStream(out);
             BufferedInputStream reader = new BufferedInputStream(in);
 
-            HttpRequest request = HttpRequest.from(reader);
+            HttpRequest request = requestParser.parse(reader);
             HttpResponse response = new HttpResponse(dos);
 
             logger.debug("HTTP 요청: {}", request);

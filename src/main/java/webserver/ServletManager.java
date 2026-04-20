@@ -10,6 +10,7 @@ import webserver.servlet.HandlerMappings;
 import webserver.servlet.HttpServlet;
 import webserver.servlet.ResourceRenderer;
 import webserver.servlet.StaticResourceServlet;
+import webserver.session.SessionManager;
 
 public class ServletManager {
     private static final Logger logger = LoggerFactory.getLogger(ServletManager.class);
@@ -20,7 +21,7 @@ public class ServletManager {
 
     public ServletManager(ResourceRenderer renderer, List<Object> handlers) {
         staticResourceServlet = new StaticResourceServlet(renderer);
-        dispatcherServlet = new DispatcherServlet(renderer, new HandlerMappings(handlers));
+        dispatcherServlet = new DispatcherServlet(renderer, new HandlerMappings(handlers), new SessionManager());
         errorServlet = new ErrorServlet(renderer);
     }
 

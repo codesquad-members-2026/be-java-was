@@ -12,6 +12,7 @@ public class HttpResponse {
     private int statusCode = 200;
     private String contentType = "text/html; charset=UTF-8";
     private String location;
+    private String cookie; // todo: 분리 고려
 
     public HttpResponse(DataOutputStream dos) {
         this.dos = dos;
@@ -24,6 +25,11 @@ public class HttpResponse {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
+
+    public void setCookie(String cookie) {
+        this.cookie = cookie;
+    }
+
 
     public void sendRedirect(String location) {
         setStatusCode(302);
@@ -46,6 +52,9 @@ public class HttpResponse {
         }
         dos.writeBytes("Content-Type: " + contentType + CRLF);
         dos.writeBytes("Content-Length: " + contentLength + CRLF);
+        if (cookie != null) {
+            dos.writeBytes("Set-Cookie: " + cookie);
+        }
         dos.writeBytes(CRLF);
         dos.write(bodyBuffer.toByteArray());
         dos.flush();
