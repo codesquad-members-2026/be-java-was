@@ -1,6 +1,7 @@
 package webserver.handlers;
 
 import annotations.RequestMapping;
+import db.DBEntryPoint;
 import db.Database;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
@@ -22,7 +23,7 @@ public class RegistrationHandlers {
     }
 
     @RequestMapping(method = "POST", path ="/create")
-    public void postCreateUserAccount(HttpRequest request, HttpResponse response){
+    public void postCreateUserAccount(HttpRequest request, HttpResponse response, DBEntryPoint database){
 
         String userId = request.getBodyParam("userID");
         String nickname = request.getBodyParam("nickname");
@@ -35,7 +36,7 @@ public class RegistrationHandlers {
         else{
             String hashedPW = hashPassword(password);
             User user = new User(userId,hashedPW,nickname,email);
-            Database.addUser(user);
+            database.addUser(user);
             logger.debug("NEW USER : {}",user );
             response.sendRedirect("/");
         }

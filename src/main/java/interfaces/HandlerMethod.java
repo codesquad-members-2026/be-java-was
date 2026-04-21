@@ -1,5 +1,6 @@
 package interfaces;
 
+import db.DBEntryPoint;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
 import model.TemplateAttributes;
@@ -10,5 +11,5 @@ import java.lang.reflect.InvocationTargetException;
 
 @FunctionalInterface
 public interface HandlerMethod {
-    public Object handle(HttpRequest request, HttpResponse response, SessionManager sessionManager, TemplateAttributes ta) throws InvocationTargetException, IllegalAccessException, InvalidClassException;
+    public Object handle(HttpRequest request, HttpResponse response, SessionManager sessionManager, TemplateAttributes ta, DBEntryPoint db) throws InvocationTargetException, IllegalAccessException, InvalidClassException;
 }

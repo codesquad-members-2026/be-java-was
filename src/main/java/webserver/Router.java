@@ -1,5 +1,6 @@
 package webserver;
 
+import db.DBEntryPoint;
 import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
@@ -18,11 +19,13 @@ public class Router {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
     private final Map<String, HandlerMethod> requestHandlers;
     private final SessionManager sessionManager;
+    private final DBEntryPoint database;
 
 
-    public Router(Map<String, HandlerMethod> injectedRequestHandlers, SessionManager sm){
+    public Router(Map<String, HandlerMethod> injectedRequestHandlers, SessionManager sm, DBEntryPoint db){
         this.requestHandlers = injectedRequestHandlers;
         this.sessionManager = sm;
+        this.database = db;
     }
 
     public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
@@ -34,7 +37,7 @@ public class Router {
             returnStaticFiles(request,response);
             return;
         }
-        Object result = h.handle(request, response, sessionManager, templateAttributes);
+        Object result = h.handle(request, response, sessionManager, templateAttributes, database);
         if(result != null){
             response.setResponseBody(Jhymeleaf.fillTemplate((String) result, templateAttributes));
             response.setHeader("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());

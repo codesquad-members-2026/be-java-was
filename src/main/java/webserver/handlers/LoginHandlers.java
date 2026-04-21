@@ -1,7 +1,7 @@
 package webserver.handlers;
 
 import annotations.RequestMapping;
-import db.Database;
+import db.DBEntryPoint;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
 import model.User;
@@ -27,10 +27,10 @@ public class LoginHandlers {
     }
 
     @RequestMapping(method = "POST", path ="/login")
-    public String postLoginRequest(HttpRequest request, HttpResponse response, SessionManager sessionManager) {
+    public String postLoginRequest(HttpRequest request, HttpResponse response, SessionManager sessionManager, DBEntryPoint database) {
         String id = request.getBodyParam("userID");
         String password = request.getBodyParam("password");
-        User possibleUser = Database.findUserById(id);
+        User possibleUser = database.findUserById(id);
 
         if(id.isEmpty() || password.isEmpty() || possibleUser == null){
             response.sendRedirect("/login/failed.html");
