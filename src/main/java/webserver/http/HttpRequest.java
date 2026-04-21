@@ -1,4 +1,4 @@
-package webserver;
+package webserver.http;
 
 import java.util.Map;
 
@@ -20,12 +20,6 @@ public class HttpRequest {
         this.headers = headers;
         this.body = body;
         this.bodyMap = bodyMap;
-    }
-
-    public boolean isStaticResource() {
-        // todo: 확장자 분리하기
-        return method.equals("GET") && (path.endsWith(".html") || path.endsWith(".css")
-                || path.endsWith(".ico") || path.endsWith(".svg"));
     }
 
     public String getMethod() {

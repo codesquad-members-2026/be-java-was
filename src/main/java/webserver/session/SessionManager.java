@@ -2,7 +2,7 @@ package webserver.session;
 
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
-import webserver.HttpRequest;
+import webserver.http.HttpRequest;
 
 public class SessionManager {
     private ConcurrentHashMap<String, Session> sessionMap = new ConcurrentHashMap<>();

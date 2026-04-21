@@ -5,7 +5,7 @@ import model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import webserver.HttpRequest;
+import webserver.http.HttpRequest;
 
 import java.io.BufferedReader;
 import java.io.StringReader;

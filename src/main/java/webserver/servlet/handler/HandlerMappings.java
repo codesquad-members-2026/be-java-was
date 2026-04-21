@@ -1,4 +1,4 @@
-package webserver.servlet;
+package webserver.servlet.handler;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;

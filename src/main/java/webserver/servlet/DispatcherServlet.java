@@ -1,9 +1,11 @@
 package webserver.servlet;
 
 import java.io.IOException;
-import webserver.HttpRequest;
-import webserver.HttpResponse;
-import webserver.PageNotFoundException;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
+import webserver.exception.PageNotFoundException;
+import webserver.servlet.handler.HandlerMappings;
+import webserver.servlet.handler.HandlerMethod;
 import webserver.session.SessionManager;
 
 public class DispatcherServlet implements HttpServlet {

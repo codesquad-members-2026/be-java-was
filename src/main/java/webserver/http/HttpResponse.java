@@ -1,8 +1,9 @@
-package webserver;
+package webserver.http;
 
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class HttpResponse {
     private static final String CRLF = "\r\n";
@@ -40,10 +41,13 @@ public class HttpResponse {
         bodyBuffer.write(bytes);
     }
 
-    public int getStatusCode() {
-        return statusCode;
+    public void write(String string) throws IOException {
+        bodyBuffer.write(string.getBytes(StandardCharsets.UTF_8));
     }
 
+    public void reset() {
+        bodyBuffer.reset();
+    }
     public void flush() throws IOException {
         int contentLength = bodyBuffer.size();
         dos.writeBytes("HTTP/1.1 " + statusCode + " " + getResponsePhrase(statusCode) + CRLF);

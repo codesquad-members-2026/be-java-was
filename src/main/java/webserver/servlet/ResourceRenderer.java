@@ -5,9 +5,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.HttpResponse;
-import webserver.Mime;
-import webserver.PageNotFoundException;
+import webserver.http.HttpResponse;
+import webserver.http.Mime;
+import webserver.exception.PageNotFoundException;
 
 public class ResourceRenderer {
     private static final Logger logger = LoggerFactory.getLogger(ResourceRenderer.class);

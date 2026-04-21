@@ -1,4 +1,4 @@
-package webserver.util;
+package webserver.http;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-import webserver.HttpRequest;
 
 public class HttpRequestParser {
     public HttpRequest parse(BufferedInputStream in) throws IOException {
