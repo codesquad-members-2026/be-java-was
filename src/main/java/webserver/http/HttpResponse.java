@@ -10,7 +10,7 @@ public class HttpResponse {
 
     private final DataOutputStream dos;
     private final ByteArrayOutputStream bodyBuffer = new ByteArrayOutputStream();
-    private int statusCode = 200;
+    private HttpStatus statusCode = HttpStatus.OK;
     private String contentType = "text/html; charset=UTF-8";
     private String location;
     private String cookie; // todo: 분리 고려
@@ -19,7 +19,7 @@ public class HttpResponse {
         this.dos = dos;
     }
 
-    public void setStatusCode(int statusCode) {
+    public void setStatusCode(HttpStatus statusCode) {
         this.statusCode = statusCode;
     }
 
@@ -33,7 +33,7 @@ public class HttpResponse {
 
 
     public void sendRedirect(String location) {
-        setStatusCode(302);
+        setStatusCode(HttpStatus.FOUND);
         this.location = location;
     }
 
@@ -50,8 +50,8 @@ public class HttpResponse {
     }
     public void flush() throws IOException {
         int contentLength = bodyBuffer.size();
-        dos.writeBytes("HTTP/1.1 " + statusCode + " " + getResponsePhrase(statusCode) + CRLF);
-        if (statusCode == 302) {
+        dos.writeBytes("HTTP/1.1 " + statusCode.toString() + CRLF);
+        if (statusCode == HttpStatus.FOUND) {
             dos.writeBytes("Location: " + location + CRLF);
         }
         dos.writeBytes("Content-Type: " + contentType + CRLF);

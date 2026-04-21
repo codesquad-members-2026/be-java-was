@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
+import webserver.http.HttpStatus;
 import webserver.servlet.exception.DefaultExceptionResolver;
 import webserver.servlet.exception.ExceptionResolver;
 import webserver.servlet.handler.HandlerMappings;
@@ -43,7 +44,7 @@ public class ServletManager {
     private void writeFailsafeResponse(HttpResponse response) {
         try {
             response.reset();
-            response.setStatusCode(500);
+            response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
             response.write("<html><body><h1>500 Internal Server Error</h1></body></html>");
         } catch (Exception e) {
             logger.error("Failsafe response failed", e);
