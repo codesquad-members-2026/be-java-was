@@ -42,7 +42,7 @@ public class UserHandler {
     }
 
     @PostMapping("/user/login")
-    public String login(HttpRequest request, HttpResponse response, Session session) {
+    public String login(HttpRequest request, Session session) {
         String userId = request.getBody("userId");
         String password = request.getBody("password");
 
@@ -51,8 +51,7 @@ public class UserHandler {
             return "/login/login_failed.html";
         }
 
-        response.setCookie("sessionId=" + session.getSessionId() + "; Path=/; Max-Age=" + 7200);
-        session.put("user", user);
+        session.addAttribute("user", user);
 
         return "redirect:/";
     }

@@ -27,7 +27,7 @@ public class HandlerMethod {
             } else if (parameterType == HttpResponse.class) {
                 args[i] = response;
             } else if (parameterType == Session.class) {
-                args[i] = sessionManager.get(request);
+                args[i] = sessionManager.get(request, response);
             } else {
                 throw new IllegalArgumentException("지원하지 않는 파라미터: " + parameterType.getName());
             }

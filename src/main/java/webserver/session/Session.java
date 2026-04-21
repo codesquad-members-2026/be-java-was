@@ -5,22 +5,22 @@ import java.util.Map;
 
 public class Session {
     private final Map<String, Object> sessionStore;
-    private final String sessionId;
+    private final String id;
 
-    public Session(String sessionId) {
+    public Session(String id) {
         this.sessionStore = new HashMap<>();
-        this.sessionId = sessionId;
+        this.id = id;
     }
 
     public Object get(String key) {
         return sessionStore.get(key);
     }
 
-    public String getSessionId() {
-        return sessionId;
+    public String getId() {
+        return id;
     }
 
-    public void put(String key, Object value) {
+    public void addAttribute(String key, Object value) {
         sessionStore.put(key, value);
     }
 }

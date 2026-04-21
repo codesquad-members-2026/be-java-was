@@ -4,6 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import webserver.session.Cookie;
 
 public class HttpResponse {
     private static final String CRLF = "\r\n";
@@ -11,9 +14,9 @@ public class HttpResponse {
     private final DataOutputStream dos;
     private final ByteArrayOutputStream bodyBuffer = new ByteArrayOutputStream();
     private HttpStatus statusCode = HttpStatus.OK;
-    private String contentType = "text/html; charset=UTF-8";
+    private String contentType = Mime.HTML.getContentType();
     private String location;
-    private String cookie; // todo: 분리 고려
+    private final List<Cookie> cookies = new ArrayList<>();
 
     public HttpResponse(DataOutputStream dos) {
         this.dos = dos;
@@ -27,8 +30,8 @@ public class HttpResponse {
         this.contentType = contentType;
     }
 
-    public void setCookie(String cookie) {
-        this.cookie = cookie;
+    public void addCookie(Cookie cookie) {
+        cookies.add(cookie);
     }
 
 
@@ -56,23 +59,12 @@ public class HttpResponse {
         }
         dos.writeBytes("Content-Type: " + contentType + CRLF);
         dos.writeBytes("Content-Length: " + contentLength + CRLF);
-        if (cookie != null) {
-            dos.writeBytes("Set-Cookie: " + cookie);
+        for (Cookie cookie : cookies) {
+            dos.writeBytes("Set-Cookie: " + cookie.toHeaderValue() + CRLF);
         }
         dos.writeBytes(CRLF);
         dos.write(bodyBuffer.toByteArray());
         dos.flush();
-    }
-
-    private String getResponsePhrase(int statusCode) {
-        //todo: 상태코드 분리
-        return switch (statusCode) {
-            case 200 -> "OK";
-            case 302 -> "Found";
-            case 404 -> "Not Found";
-            case 500 -> "Internal Server Error";
-            default -> "Unknown Status";
-        };
     }
 
 }
