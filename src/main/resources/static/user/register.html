@@ -9,10 +9,10 @@
   <body>
     <div class="container">
       <header class="header">
-        <a href="/"><img src="../img/signiture.svg" /></a>
+        <a href="/static"><img src="../img/signiture.svg" /></a>
         <ul class="header__menu">
           <li class="header__menu__item">
-            <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
+            <a class="btn btn_contained btn_size_s" href="/user">로그인</a>
           </li>
           <li class="header__menu__item">
             <a class="btn btn_ghost btn_size_s" href="/registration">
@@ -22,14 +22,24 @@
         </ul>
       </header>
       <div class="page">
-        <h2 class="page-title">로그인</h2>
-        <form class="form">
+        <h2 class="page-title">회원가입</h2>
+        <form class="form" action="/create" method="POST">
           <div class="textfield textfield_size_s">
             <p class="title_textfield">아이디</p>
             <input
               class="input_textfield"
               placeholder="아이디를 입력해주세요"
               autocomplete="username"
+              name="userId"
+            />
+          </div>
+          <div class="textfield textfield_size_s">
+            <p class="title_textfield">닉네임</p>
+            <input
+              class="input_textfield"
+              placeholder="닉네임을 입력해주세요"
+              autocomplete="username"
+              name="name"
             />
           </div>
           <div class="textfield textfield_size_s">
@@ -39,15 +49,26 @@
               type="password"
               placeholder="비밀번호를 입력해주세요"
               autocomplete="current-password"
+              name="password"
             />
           </div>
+            <div class="textfield textfield_size_s">
+                <p class="title_textfield">이메일</p>
+                <input
+                        class="input_textfield"
+                        type="email"
+                        placeholder="이메일을 입력해주세요"
+                        autocomplete="email"
+                        name="email"
+                />
+            </div>
           <button
-            id="login-btn"
+            id="registration-btn"
             class="btn btn_contained btn_size_m"
             style="margin-top: 24px"
-            type="button"
+            type="submit"
           >
-            로그인
+            회원가입
           </button>
         </form>
       </div>

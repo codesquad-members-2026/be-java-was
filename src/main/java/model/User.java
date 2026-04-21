@@ -31,6 +31,10 @@ public class User {
         throw new DuplicateUserInDBException(tempUserId + " already exists");
     }
 
+    public boolean isEqualPassword(String password){
+        return this.password.equals(password);
+    }
+
     public String getUserId() {
         return userId;
     }

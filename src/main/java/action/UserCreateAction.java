@@ -22,7 +22,7 @@ public class UserCreateAction implements Action {
             return ResponseData.of("redirect:/index.html");
         } catch (DuplicateUserInDBException de) {
             logger.error("User already exists");
-            return ResponseData.of("redirect:/registration/register.html");
+            return ResponseData.of("redirect:/user/register.html");
         }
     }
 }
