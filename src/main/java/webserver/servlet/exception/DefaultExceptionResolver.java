@@ -6,27 +6,28 @@ import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.exception.PageNotFoundException;
 import webserver.http.HttpStatus;
-import webserver.servlet.ResourceRenderer;
+import webserver.resource.ResourceLoader;
 
 public class DefaultExceptionResolver implements ExceptionResolver {
     private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionResolver.class);
 
-    private final ResourceRenderer renderer;
+    private final ResourceLoader resourceLoader;
 
-    public DefaultExceptionResolver(ResourceRenderer renderer) {
-        this.renderer = renderer;
+    public DefaultExceptionResolver(ResourceLoader resourceLoader) {
+        this.resourceLoader = resourceLoader;
     }
 
     @Override
     public void resolve(HttpRequest request, HttpResponse response, Exception ex) {
+        response.reset();
         try {
             if (ex instanceof PageNotFoundException) {
                 response.setStatusCode(HttpStatus.NOT_FOUND);
-                renderer.render("/error/404.html", response);
+                response.write(resourceLoader.loadAsBytes("/error/404.html"));
                 return;
             }
             response.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR);
-            renderer.render("/error/500.html", response);
+            response.write(resourceLoader.loadAsBytes("/error/500.html"));
         } catch (Exception e) {
             logger.error("에러 페이지 렌더링 실패", e);
             throw new RuntimeException(e);

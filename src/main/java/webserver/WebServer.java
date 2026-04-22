@@ -9,8 +9,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import webserver.servlet.ResourceRenderer;
 import webserver.http.HttpRequestParser;
+import webserver.resource.ResourceLoader;
 import webserver.servlet.ServletManager;
 
 public class WebServer {
@@ -27,8 +27,8 @@ public class WebServer {
 
         // todo: 핸들러 주입 개선 (컴포넌트 스캔 스타일, 외부 파일에서 설정 고려)
         List<Object> handlers = List.of(new UserHandler());
-        ResourceRenderer renderer = new ResourceRenderer();
-        ServletManager servletManager = new ServletManager(renderer, handlers);
+        ResourceLoader resourceLoader = new ResourceLoader();
+        ServletManager servletManager = new ServletManager(resourceLoader, handlers);
         HttpRequestParser requestParser = new HttpRequestParser();
 
         // 서버소켓을 생성한다. 웹서버는 기본적으로 8080번 포트를 사용한다.

@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.http.HttpStatus;
+import webserver.resource.ResourceLoader;
+import webserver.response.ResponseResolver;
 import webserver.servlet.exception.DefaultExceptionResolver;
 import webserver.servlet.exception.ExceptionResolver;
 import webserver.servlet.handler.HandlerMappings;
@@ -18,10 +20,10 @@ public class ServletManager {
     private final HttpServlet dispatcherServlet;
     private final ExceptionResolver exceptionResolver;
 
-    public ServletManager(ResourceRenderer renderer, List<Object> handlers) {
-        staticResourceServlet = new StaticResourceServlet(renderer);
-        dispatcherServlet = new DispatcherServlet(renderer, new HandlerMappings(handlers), new SessionManager());
-        exceptionResolver = new DefaultExceptionResolver(renderer);
+    public ServletManager(ResourceLoader loader, List<Object> handlers) {
+        staticResourceServlet = new StaticResourceServlet(loader);
+        dispatcherServlet = new DispatcherServlet(new ResponseResolver(), new HandlerMappings(handlers), new SessionManager());
+        exceptionResolver = new DefaultExceptionResolver(loader);
     }
 
     public void execute(HttpRequest request, HttpResponse response) {

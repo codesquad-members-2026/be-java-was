@@ -34,7 +34,6 @@ public class HttpResponse {
         cookies.add(cookie);
     }
 
-
     public void sendRedirect(String location) {
         setStatusCode(HttpStatus.FOUND);
         this.location = location;
