@@ -1,14 +1,12 @@
 package handler;
 
 import db.Database;
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import model.User;
-import webserver.HttpRequest;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
+import webserver.session.Session;
 
 public class UserHandler {
 
@@ -29,16 +27,32 @@ public class UserHandler {
 
     @PostMapping("/user/create")
     public String register(HttpRequest request) {
-        byte[] body = request.getBody();
-        Map<String, String> keyValue = new HashMap<>();
-        request.parseUrlEncodedParams(new String(body, StandardCharsets.UTF_8), keyValue);
-
-        String userId = keyValue.get("userId");
-        String password = keyValue.get("password");
-        String name = keyValue.get("name");
+        String userId = request.getBody("userId");
+        String password = request.getBody("password");
+        String name = request.getBody("name");
         User newUser = new User(userId, password, name, null);
 
         Database.addUser(newUser);
+        return "redirect:/";
+    }
+
+    @GetMapping("/login")
+    public String loginForm() {
+        return "/login/index.html";
+    }
+
+    @PostMapping("/user/login")
+    public String login(HttpRequest request, Session session) {
+        String userId = request.getBody("userId");
+        String password = request.getBody("password");
+
+        User user = Database.findUserById(userId);
+        if (user == null || !user.getPassword().equals(password)) {
+            return "/login/login_failed.html";
+        }
+
+        session.addAttribute("user", user);
+
         return "redirect:/";
     }
 }

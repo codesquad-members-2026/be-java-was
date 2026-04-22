@@ -1,8 +1,8 @@
 package webserver.servlet;
 
 import java.io.IOException;
-import webserver.HttpRequest;
-import webserver.HttpResponse;
+import webserver.http.HttpRequest;
+import webserver.http.HttpResponse;
 
 public class StaticResourceServlet implements HttpServlet {
     private final ResourceRenderer renderer;
