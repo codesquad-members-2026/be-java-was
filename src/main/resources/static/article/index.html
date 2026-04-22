@@ -9,7 +9,7 @@
 <body>
 <div class="container">
   <header class="header">
-    <a href="/main"><img src="../img/signiture.svg" /></a>
+    <a href="/"><img src="../img/signiture.svg" /></a>
     <ul class="header__menu">
       <li class="header__menu__item">
         <a class="btn btn_contained btn_size_s" href="/article">글쓰기</a>
@@ -23,7 +23,7 @@
   </header>
   <div class="page">
     <h2 class="page-title">게시글 작성</h2>
-    <form class="form" action="/">
+    <form class="form" action="/article" method="POST">
 
       <div class="textfield textfield_size_m" style="margin-bottom: 16px;">
         <p class="title_textfield">제목</p>
@@ -51,7 +51,7 @@
               id="registration-btn"
               class="btn btn_contained btn_size_m"
               style="margin-top: 24px"
-              type="button"
+              type="submit"
       >
         작성 완료
       </button>

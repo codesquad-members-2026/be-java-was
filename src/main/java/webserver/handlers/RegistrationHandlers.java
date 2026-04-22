@@ -35,9 +35,8 @@ public class RegistrationHandlers {
         }
         else{
             String hashedPW = hashPassword(password);
-            User user = new User(userId,hashedPW,nickname,email);
-            database.addUser(user);
-            logger.debug("NEW USER : {}",user );
+            database.addUser(userId, hashedPW, nickname, email);
+            logger.info("NEW USER CREATED : {}", userId );
             response.sendRedirect("/");
         }
 

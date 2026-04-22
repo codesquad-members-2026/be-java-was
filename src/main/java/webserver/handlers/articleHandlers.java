@@ -4,9 +4,12 @@ import annotations.RequestMapping;
 import db.DBEntryPoint;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
+import model.Article;
+import model.User;
 import webserver.session.Session;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 public class articleHandlers {
     @RequestMapping(method="GET", path="/article")
@@ -27,6 +30,17 @@ public class articleHandlers {
         }
 
         // TODO : post it into DB and redirect to main page
+        User sessionUser = (User)session.getAttribute("user");
+
+        String title = request.getBodyParam("title");
+        String contentBody = request.getBodyParam("content");
+        String authorName = sessionUser.getName();
+        int authorIdIdx = sessionUser.getId();
+        LocalDateTime currentTime = LocalDateTime.now();
+
+        database.addArticle(title, contentBody, authorName, authorIdIdx, currentTime);
+
+        response.sendRedirect("/");
         return null;
     }
 

@@ -53,7 +53,6 @@ public class Router {
         }
         String url = request.getUrl();
         try {
-
             byte[] file = FileLoader.getStaticFile(url);
             response.setStatus("200 OK");
             response.setHeader("Content-Type", MimeTypeParser.getContentType(MimeTypeParser.extractExtension(url)));
@@ -63,7 +62,7 @@ public class Router {
         } catch (IOException e) {
             response.setStatus("404 Not Found");
             logger.error("Exception Caused 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
-            response.send();
+            response.sendRedirect("/404.html");
         }
 
     }
