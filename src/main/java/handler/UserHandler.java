@@ -5,17 +5,14 @@ import model.User;
 import webserver.http.HttpRequest;
 import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
+import webserver.response.TemplateData;
 import webserver.session.Session;
 
 public class UserHandler {
 
     @GetMapping("/")
-    public String home() {
-        return "/index.html";
-    }
-
-    @GetMapping("/main")
-    public String mainPage() {
+    public String home(Session session, TemplateData data) {
+        data.add("user", session.get("user"));
         return "/index.html";
     }
 
@@ -53,5 +50,15 @@ public class UserHandler {
         session.addAttribute("user", user);
 
         return "redirect:/";
+    }
+
+    @GetMapping("/user/list")
+    public String userList(Session session, TemplateData data) {
+        if (session.get("user") == null) {
+            return "redirect:/login";
+        }
+
+        data.add("users", Database.findAll());
+        return "/user/users.html";
     }
 }

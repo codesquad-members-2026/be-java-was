@@ -12,6 +12,15 @@
       <header class="header">
         <a href="/"><img src="./img/signiture.svg" /></a>
         <ul class="header__menu">
+          {{#user}}
+          <li class="header__menu__item">
+            <span class="btn btn_ghost btn_size_s">{{name}}</span>
+          </li>
+          <li class="header__menu__item">
+            <a class="btn btn_contained btn_size_s" href="/user/logout">로그아웃</a>
+          </li>
+          {{/user}}
+          {{^user}}
           <li class="header__menu__item">
             <a class="btn btn_contained btn_size_s" href="/login">로그인</a>
           </li>
@@ -20,6 +29,7 @@
               회원 가입
             </a>
           </li>
+          {{/user}}
         </ul>
       </header>
       <div class="wrapper">
