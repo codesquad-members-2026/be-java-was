@@ -18,8 +18,14 @@ public class UserLogoutAction implements Action {
 
         if (sid != null) {
             SessionManager.getInstance().delete(sid);
-            logger.debug("로그아웃 성공: 세션 ID {} 삭제 완료", sid);
+
+            logger.debug("로그아웃 성공: 세션 ID=[{}] 가 삭제되었습니다.", sid);
+
+            response.addHeader("Set-Cookie", "SID=" + sid + "; Path=/; Max-Age=0");
+        } else {
+            logger.debug("로그아웃 시도: 유효한 세션 쿠키가 없습니다.");
         }
+
         response.sendRedirect("/index.html");
     }
 }

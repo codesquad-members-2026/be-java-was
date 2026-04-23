@@ -12,7 +12,6 @@ import java.io.IOException;
 public class UserCreateAction implements Action {
     private static final Logger logger = LoggerFactory.getLogger(UserCreateAction.class);
 
-
     @Override
     public void execute(HttpRequest request, HttpResponse response) throws IOException {
         if (!"POST".equals(request.getMethod())) {
@@ -27,9 +26,7 @@ public class UserCreateAction implements Action {
 
         User user = new User(userId, password, name, email);
         Database.addUser(user);
-
         logger.debug("회원가입 성공: {}", user);
-
         response.sendRedirect("/index.html");
     }
 }

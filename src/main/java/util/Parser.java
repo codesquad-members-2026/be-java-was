@@ -7,7 +7,6 @@ import java.util.Map;
 
 public class Parser {
 
-
     public static Map<String, String> parseQueryString(String queryString) {
 
         if (queryString == null || queryString.isEmpty()) {
@@ -33,7 +32,6 @@ public class Parser {
     }
 
     public static void parseCookies(String queryString, Map<String, String> cookies) {
-
         String[] pairs = queryString.split(";");
 
         for (String pair : pairs) {

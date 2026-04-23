@@ -8,6 +8,7 @@ public enum MimeType {
     SVG(".svg", "image/svg+xml"),
     PNG(".png", "image/png"),
     ICO(".ico", "image/x-icon"),
+
     UNKNOWN("", "application/octet-stream");
 
     private final String extension;
@@ -18,16 +19,8 @@ public enum MimeType {
         this.mime = mime;
     }
 
-    public String getExtension() {
-        return extension;
-    }
-
-    public String getMime() {
-        return mime;
-
-    }
-
     public static String getMime(String path) {
+
         String lowerPath = path.toLowerCase();
 
         return java.util.Arrays.stream(values())

@@ -11,7 +11,7 @@ public class SessionManager {
     private final Map<String, User> sessions = new ConcurrentHashMap<String, User>();
     private static final SessionManager instance = new SessionManager();
 
-    public SessionManager() {
+    private SessionManager() {
     }
 
     public static SessionManager getInstance() {
@@ -25,9 +25,11 @@ public class SessionManager {
     }
 
     public User read(String sessionId) {
+        if (sessionId == null) {
+            return null;
+        }
         return sessions.get(sessionId);
     }
-
     public void delete(String sessionId) {
         sessions.remove(sessionId);
     }

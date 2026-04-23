@@ -8,6 +8,7 @@ public class PathUtil {
         if (path.equals("/")) return "/index.html";
         if (path.equals("/registration")) return "/registration/index.html";
         if (path.equals("/login")) return "/login/index.html";
+
         return path;
     }
 }
