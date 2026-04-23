@@ -1,8 +1,8 @@
 package app.action;
 
+import app.user.UserListResponse;
 import db.Database;
 import app.user.User;
-import app.user.UserListResponseDTO;
 import core.session.SessionManager;
 import core.routing.RouteType;
 import core.routing.RoutedInfo;
@@ -27,7 +27,9 @@ public class UserListAction implements Action {
         }
 
         List<User> allUsers = Database.findAllUsers();
-        List<UserListResponseDTO> userList = allUsers.stream().map(UserListResponseDTO::new).toList();
+        List<UserListResponse> userList = allUsers.stream()
+                .map(u -> new UserListResponse(u.getUserId(), u.getName(), u.getEmail()))
+                .toList();
 
         StringBuilder userListHtml = new StringBuilder();
         makeUserListHtml(userList, userListHtml);
@@ -37,17 +39,18 @@ public class UserListAction implements Action {
         return RoutedInfo.of("/user/list.html", RouteType.DYNAMIC, headers, models);
     }
 
-    private void makeUserListHtml(List<UserListResponseDTO> listDTO, StringBuilder userListHtml) {
-        for(UserListResponseDTO dto : listDTO){
+    // TODO: 자바 코드 안에 뷰(HTML) 코드가 섞여 있음 --> 템플릿 엔진이 반복문을 구현하면, 유저의 리스트 데이터만 보내기
+    private void makeUserListHtml(List<UserListResponse> userList, StringBuilder userListHtml) {
+        for(UserListResponse user : userList){
             userListHtml.append("<tr>")
                     .append("  <td>")
                     .append("    <div class=\"user-info\">")
                     .append("      <div class=\"user-avatar\"></div>")
-                    .append("      <span class=\"user-id\">").append(dto.getUserId()).append("</span>")
+                    .append("      <span class=\"user-id\">").append(user.userId()).append("</span>")
                     .append("    </div>")
                     .append("  </td>")
-                    .append("  <td>").append(dto.getUserName()).append("</td>")
-                    .append("  <td>").append(dto.getUserEmail()).append("</td>")
+                    .append("  <td>").append(user.userName()).append("</td>")
+                    .append("  <td>").append(user.userEmail()).append("</td>")
                     .append("</tr>");
         }
     }
