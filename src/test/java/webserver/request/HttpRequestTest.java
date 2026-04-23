@@ -1,5 +1,6 @@
 package webserver.request;
 
+import core.request.HttpRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
