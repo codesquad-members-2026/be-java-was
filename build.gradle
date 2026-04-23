@@ -16,6 +16,7 @@ dependencies {
     implementation 'org.mindrot:jbcrypt:0.4'
     implementation 'ch.qos.logback:logback-classic:1.5.13'
     testImplementation 'org.assertj:assertj-core:3.27.7'
+    runtimeOnly 'com.h2database:h2:2.2.224'
 
 
 }

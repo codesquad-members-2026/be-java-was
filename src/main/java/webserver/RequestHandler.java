@@ -32,11 +32,7 @@ public class RequestHandler implements Runnable {
             if (newRequest == null) return;
             try {
                 router.handleRequest(newRequest, newResponse);
-            } catch (InvocationTargetException e) {
-                throw new RuntimeException(e);
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
-            } catch (NoSuchMethodException e) {
+            } catch (IllegalAccessException| NoSuchMethodException| InvocationTargetException e) {
                 throw new RuntimeException(e);
             }
 

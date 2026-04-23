@@ -25,7 +25,7 @@ class MainPageHandlersTest {
         TemplateAttributes mockTemplateAtts = mock(TemplateAttributes.class);
 
         // when
-        mainPageHandlers.getFrontPage(request, response, session,mockTemplateAtts);
+        mainPageHandlers.getFrontPage(session,mockTemplateAtts);
 
         // then
         verify(response).sendHtml("/index.html");
@@ -42,7 +42,7 @@ class MainPageHandlersTest {
         when(request.getSessionID()).thenReturn("expired-session-id");
 
         // when
-        mainPageHandlers.getFrontPage(request, response, null,mockTemplateAtts);
+        mainPageHandlers.getFrontPage(null,mockTemplateAtts);
 
         // then
         verify(response).setHeader(eq("Set-Cookie"), contains("Max-Age=0")); // Verifies cookie deletion

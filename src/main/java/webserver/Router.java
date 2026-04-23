@@ -1,5 +1,6 @@
 package webserver;
 
+import db.DBEntryPoint;
 import fileIO.FileLoader;
 import jhttp.HttpRequest;
 import jhttp.HttpResponse;
@@ -16,25 +17,27 @@ import java.util.Map;
 
 public class Router {
     private static final Logger logger = LoggerFactory.getLogger(Router.class);
-    private final Map<String, HandlerMethod> handlers ;
+    private final Map<String, HandlerMethod> requestHandlers;
     private final SessionManager sessionManager;
+    private final DBEntryPoint database;
 
 
-    public Router(Map<String, HandlerMethod> injectedHandlers, SessionManager sm){
-        this.handlers = injectedHandlers;
+    public Router(Map<String, HandlerMethod> injectedRequestHandlers, SessionManager sm, DBEntryPoint db){
+        this.requestHandlers = injectedRequestHandlers;
         this.sessionManager = sm;
+        this.database = db;
     }
 
     public void handleRequest(HttpRequest request, HttpResponse response) throws InvocationTargetException, IllegalAccessException, IOException, NoSuchMethodException {
         logger.info("{} requested for - {}", request.getMethod(), request.getUrl());
         String signature = extractSignature(request);
         TemplateAttributes templateAttributes = new TemplateAttributes();
-        HandlerMethod h = handlers.get(signature);
+        HandlerMethod h = requestHandlers.get(signature);
         if(h == null){
             returnStaticFiles(request,response);
             return;
         }
-        Object result = h.handle(request, response, sessionManager, templateAttributes);
+        Object result = h.handle(request, response, sessionManager, templateAttributes, database);
         if(result != null){
             response.setResponseBody(Jhymeleaf.fillTemplate((String) result, templateAttributes));
             response.setHeader("Content-Type", MimeTypeParser.MimeType.HTML.getContentType());
@@ -50,7 +53,6 @@ public class Router {
         }
         String url = request.getUrl();
         try {
-
             byte[] file = FileLoader.getStaticFile(url);
             response.setStatus("200 OK");
             response.setHeader("Content-Type", MimeTypeParser.getContentType(MimeTypeParser.extractExtension(url)));
@@ -60,7 +62,7 @@ public class Router {
         } catch (IOException e) {
             response.setStatus("404 Not Found");
             logger.error("Exception Caused 400 Bad Request Response for : {} at {}", request.getMethod(), request.getUrl());
-            response.send();
+            response.sendRedirect("/404.html");
         }
 
     }

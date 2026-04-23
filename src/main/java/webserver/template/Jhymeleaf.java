@@ -28,14 +28,14 @@ public class Jhymeleaf {
         return htmlString.getBytes(StandardCharsets.UTF_8);
     }
 
-    public static String processHtmlString(String htmlString, TemplateAttributes templateAttributes)throws IOException, InvocationTargetException, NoSuchMethodException, IllegalAccessException{
+    public static String processHtmlString(String htmlString, TemplateAttributes templateAttributes)throws InvocationTargetException, NoSuchMethodException, IllegalAccessException{
         htmlString = processIf(htmlString,templateAttributes);
         htmlString = processEachBlock(htmlString,templateAttributes);
         htmlString = processVar(htmlString,templateAttributes);
         return htmlString;
     }
 
-    private static String processIf(String htmlString, TemplateAttributes templateAttributes) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    private static String processIf(String htmlString, TemplateAttributes templateAttributes)  {
         Matcher ifBlockFinder = ifPattern.matcher(htmlString);
         StringBuilder stringBuilder = new StringBuilder();
         while(ifBlockFinder.find()){
@@ -70,7 +70,7 @@ public class Jhymeleaf {
         return ifnotbuilder.toString();
     }
 
-    private static String processEachBlock(String htmlString, TemplateAttributes templateAttributes) throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
+    private static String processEachBlock(String htmlString, TemplateAttributes templateAttributes) {
 
         Matcher blockFinder = foreachPatter.matcher(htmlString);
         StringBuilder stringBuilder = new StringBuilder();

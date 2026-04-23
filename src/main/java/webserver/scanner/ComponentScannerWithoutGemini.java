@@ -80,7 +80,7 @@ public class ComponentScannerWithoutGemini {
                         Class<?>[] params = m.getParameterTypes();
 
 
-                        HandlerMethod h = (req, res, sessionManager, ta) -> {
+                        HandlerMethod h = (req, res, sessionManager, ta, db) -> {
                             Object[] args = new Object[params.length];
                             for(int i=0; i < params.length; i++){
                                 if(params[i].getSimpleName().equals("HttpRequest")){
@@ -99,6 +99,9 @@ public class ComponentScannerWithoutGemini {
                                 }
                                 else if(params[i].getSimpleName().equals("SessionManager")){
                                     args[i] = sessionManager;
+                                }
+                                else if(params[i].getSimpleName().equals("DBEntryPoint")){
+                                    args[i] = db;
                                 }
                                 else{
                                     throw new InvalidClassException("NOT SUPPORTED PARAMETER SCANNED");

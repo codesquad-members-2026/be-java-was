@@ -3,8 +3,6 @@ package webserver;
 public class MimeTypeParser {
 
 
-    // TODO : enum transition
-
 
     public enum MimeType{
         HTML("html", "text/html;charset=utf-8"),
@@ -31,6 +29,8 @@ public class MimeTypeParser {
             }
 
             MimeType retMimeType = OCTET;
+
+            // TODO : Stream transition**
             for(MimeType m : MimeType.values()){
                 if(extension.equals(m.getFileExtension())){
                     retMimeType = m;

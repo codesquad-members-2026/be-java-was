@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import db.CodestagramDBManager;
+import db.DBEntryPoint;
 import interfaces.HandlerMethod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,10 +26,12 @@ public class WebServer {
 
 
     public static void main(String args[]) throws Exception {
-//        Map<String, HandlerMethod> dynamicHandlers = ComponentScanner.scanHandlers("webserver.handlers");
-        Map<String, HandlerMethod> dynamicHandlers = ComponentScannerWithoutGemini.loadHandlers("webserver/handlers");
+//        Map<String, HandlerMethod> handlerMethodMap = ComponentScanner.scanHandlers("webserver.handlers");
+        Map<String, HandlerMethod> handlerMethodMap = ComponentScannerWithoutGemini.loadHandlers("webserver/handlers");
         SessionManager sessionManager = new SessionManager();
-        Router router = new Router(dynamicHandlers, sessionManager);
+        CodestagramDBManager dbManager = new CodestagramDBManager(30);
+        DBEntryPoint database = new DBEntryPoint(dbManager);
+        Router router = new Router(handlerMethodMap, sessionManager, database);
 
         int port = 0;
         if (args == null || args.length == 0) {
