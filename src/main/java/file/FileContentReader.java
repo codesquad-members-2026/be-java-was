@@ -9,7 +9,7 @@ import java.io.IOException;
 
 public class FileContentReader {
 
-    public static ByteArrayOutputStream extract(File file){
+    public static byte[] extract(File file){
         // TODO: 왜 8KB 만큼 퍼오는가? 이렇게 했을 때의 트레이드 오프는?
         byte[] buffer = new byte[8192];
         int readCount;
@@ -21,7 +21,7 @@ public class FileContentReader {
                 bos.write(buffer, 0, readCount);
             }
 
-            return bos;
+            return bos.toByteArray();
 
         } catch (IOException ie) {
             throw new InternalServerException("A fatal error occurred while reading file data: " + file.getName() + " " + ie);
