@@ -22,7 +22,7 @@ public class ServletManager {
 
     public ServletManager(ResourceLoader loader, List<Object> handlers) {
         staticResourceServlet = new StaticResourceServlet(loader);
-        dispatcherServlet = new DispatcherServlet(new ResponseResolver(), new HandlerMappings(handlers), new SessionManager());
+        dispatcherServlet = new DispatcherServlet(new ResponseResolver(loader), new HandlerMappings(handlers), new SessionManager());
         exceptionResolver = new DefaultExceptionResolver(loader);
     }
 

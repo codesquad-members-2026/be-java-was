@@ -1,7 +1,6 @@
 package webserver.response.template;
 
 import java.util.List;
-import webserver.response.TemplateData;
 
 public class TemplateEngine {
     private final TemplateParser parser;

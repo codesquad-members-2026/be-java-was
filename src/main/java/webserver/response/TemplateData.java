@@ -16,4 +16,8 @@ public class TemplateData {
     public Object get(String key) {
         return map.get(key);
     }
+
+    public Map<String, Object> toMap() {
+        return map;
+    }
 }

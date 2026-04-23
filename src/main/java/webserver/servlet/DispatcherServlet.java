@@ -4,6 +4,7 @@ import java.io.IOException;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.exception.PageNotFoundException;
+import webserver.resource.ResourceLoader;
 import webserver.response.ResponseRenderer;
 import webserver.response.ResponseResolver;
 import webserver.response.TemplateData;

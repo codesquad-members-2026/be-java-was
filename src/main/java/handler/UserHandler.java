@@ -3,7 +3,6 @@ package handler;
 import db.Database;
 import model.User;
 import webserver.http.HttpRequest;
-import webserver.http.HttpResponse;
 import webserver.annotation.GetMapping;
 import webserver.annotation.PostMapping;
 import webserver.session.Session;
