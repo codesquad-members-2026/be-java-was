@@ -22,8 +22,8 @@ public record RoutedInfo(String routedPath, RouteType routeType, Map<String, Str
     public static RoutedInfo of(String rawPath, RouteType routeType,
                                 Map<String, String> headers, Map<String, Object> models) {
         boolean isRedirect = RouteType.REDIRECT.equals(routeType);
-        String removeRedirectPath = isRedirect ? rawPath.substring(REDIRECT_CONSTANT.length()) : rawPath;
-        String[] querySplits = removeRedirectPath.split(QUESTION, 2);
+        String noRedirectPath = isRedirect ? rawPath.substring(REDIRECT_CONSTANT.length()) : rawPath;
+        String[] querySplits = noRedirectPath.split(QUESTION, 2);
         String purePath = querySplits[0];
         Map<String, String> queries = querySplits.length == 2 ? extractQueries(querySplits[1]) : new HashMap<>();
 

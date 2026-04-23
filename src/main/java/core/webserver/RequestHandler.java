@@ -60,7 +60,7 @@ public class RequestHandler implements Runnable {
             return FileData.processRedirect();
         } else{
             File safeFile = ResourceResolver.resolve(routedInfo.routedPath(), routeType);
-            ByteArrayOutputStream contents = FileContentReader.extract(safeFile);
+            byte[] contents = FileContentReader.extract(safeFile);
 
             if(routeType == RouteType.DYNAMIC){
                 contents = WanjaTemplateEngine.convertFile(contents, routedInfo.models());

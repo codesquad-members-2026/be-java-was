@@ -1,10 +1,8 @@
 package db;
 
-import model.User;
+import app.user.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Database {
     private static Map<String, User> users = new HashMap<>();
@@ -27,5 +25,9 @@ public class Database {
 
     public static boolean checkPasswordMatching(String userId, String password) {
         return findUserById(userId).getPassword().equals(password);
+    }
+
+    public static List<User> findAllUsers() {
+        return new ArrayList<>(users.values());
     }
 }

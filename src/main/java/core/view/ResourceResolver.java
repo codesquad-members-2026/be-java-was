@@ -93,6 +93,6 @@ public class ResourceResolver {
     private static void checkFileSize(File file){
         if(file.length() > MAX_FILE_SIZE){
             throw new PayloadTooLargeException("File size exceeded limit: " + file.getName());
-        }
+        } // TODO: 설명할 수 있어야 함
     }
 }
