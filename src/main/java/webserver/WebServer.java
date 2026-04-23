@@ -1,5 +1,7 @@
 package webserver;
 
+import db.config.DBInitializer;
+import db.dao.UserDao;
 import handler.UserHandler;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -25,8 +27,11 @@ public class WebServer {
             port = Integer.parseInt(args[0]);
         }
 
+        DBInitializer.init();
+        org.h2.tools.Server.createWebServer("-webPort", "8082").start();
+
         // todo: 핸들러 주입 개선 (컴포넌트 스캔 스타일, 외부 파일에서 설정 고려)
-        List<Object> handlers = List.of(new UserHandler());
+        List<Object> handlers = List.of(new UserHandler(new UserDao()));
         ResourceLoader resourceLoader = new ResourceLoader();
         ServletManager servletManager = new ServletManager(resourceLoader, handlers);
         HttpRequestParser requestParser = new HttpRequestParser();

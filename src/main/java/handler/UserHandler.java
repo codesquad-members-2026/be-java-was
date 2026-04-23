@@ -1,6 +1,7 @@
 package handler;
 
-import db.Database;
+import db.dao.UserDao;
+import java.util.List;
 import model.User;
 import webserver.http.HttpRequest;
 import webserver.annotation.GetMapping;
@@ -9,6 +10,11 @@ import webserver.response.TemplateData;
 import webserver.session.Session;
 
 public class UserHandler {
+    private final UserDao dao;
+
+    public UserHandler(UserDao dao) {
+        this.dao = dao;
+    }
 
     @GetMapping("/")
     public String home(Session session, TemplateData data) {
@@ -26,9 +32,10 @@ public class UserHandler {
         String userId = request.getBody("userId");
         String password = request.getBody("password");
         String name = request.getBody("name");
-        User newUser = new User(userId, password, name, null);
 
-        Database.addUser(newUser);
+        User newUser = new User(userId, password, name, null);
+        dao.save(newUser);
+        //Database.addUser(newUser);
         return "redirect:/";
     }
 
@@ -42,14 +49,13 @@ public class UserHandler {
         String userId = request.getBody("userId");
         String password = request.getBody("password");
 
-        User user = Database.findUserById(userId);
-        if (user == null || !user.getPassword().equals(password)) {
-            return "/login/login_failed.html";
-        }
-
-        session.addAttribute("user", user);
-
-        return "redirect:/";
+        return dao.findByUserId(userId)
+                .filter(user -> user.getPassword().equals(password))
+                .map(user -> {
+                    session.addAttribute("user", user);
+                    return "redirect:/";
+                })
+                .orElse("/login/login_failed.html");
     }
 
     @GetMapping("/user/list")
@@ -57,8 +63,8 @@ public class UserHandler {
         if (session.get("user") == null) {
             return "redirect:/login";
         }
-
-        data.add("users", Database.findAll());
+        List<User> all = dao.findAll();
+        data.add("users", all);
         return "/user/users.html";
     }
 }
