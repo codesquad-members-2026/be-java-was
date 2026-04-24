@@ -42,7 +42,7 @@ jobs:
                           name
                         }
                       }
-                      reviews(last: 1) {
+                      reviews(last: 10) {
                         nodes {
                           state
                         }
@@ -70,13 +70,22 @@ jobs:
                 })
                 continue;
              }
-             if (node.reviews.nodes.length && node.reviews.nodes[0].state === "CHANGES_REQUESTED") {
+             if (node.reviews.nodes.some(r => r.state === "CHANGES_REQUESTED")) {
                 //add comment
                 await github.rest.issues.createComment({
                     owner: context.repo.owner,
                     repo: context.repo.repo,
                     issue_number: node.number,
                     body: "변경 요청 중인 브랜치의 머지를 연기합니다."
+                })
+                continue;
+             }
+             if (!node.reviews.nodes.some(r => r.state === "APPROVED")) {
+                await github.rest.issues.createComment({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    issue_number: node.number,
+                    body: "승인된 리뷰가 없어 자동 병합을 건너뜁니다."
                 })
                 continue;
              }
