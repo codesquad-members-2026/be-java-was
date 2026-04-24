@@ -14,6 +14,7 @@ dependencies {
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.8.1'
 
     implementation 'ch.qos.logback:logback-classic:1.5.13'
+    implementation 'com.h2database:h2:2.2.224'
     testImplementation 'org.assertj:assertj-core:3.27.7'
 
 

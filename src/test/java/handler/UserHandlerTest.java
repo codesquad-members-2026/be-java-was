@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @DisplayName("UserHandler")
 class UserHandlerTest {
-
+    // todo: 테스트수정
     private final UserHandler userHandler = new UserHandler();
     private final HttpRequestParser parser = new HttpRequestParser();
 
@@ -77,7 +77,7 @@ class UserHandlerTest {
             User saved = Database.findUserById("gabi");
             assertThat(saved.getUserId()).isEqualTo("gabi");
             assertThat(saved.getPassword()).isEqualTo("1234");
-            assertThat(saved.getName()).isEqualTo("홍길동");
+            assertThat(saved.getUserName()).isEqualTo("홍길동");
         }
 
         @Test
@@ -99,7 +99,7 @@ class UserHandlerTest {
 
             userHandler.register(request);
 
-            assertThat(Database.findUserById("gabi").getName()).isEqualTo("홍길동");
+            assertThat(Database.findUserById("gabi").getUserName()).isEqualTo("홍길동");
         }
     }
 
