@@ -16,12 +16,6 @@ public class UserHandler {
         this.dao = dao;
     }
 
-    @GetMapping("/")
-    public String home(Session session, TemplateData data) {
-        data.add("user", session.get("user"));
-        return "/index.html";
-    }
-
     @GetMapping("/registration")
     public String registerForm() {
         return "/registration/index.html";
@@ -35,7 +29,6 @@ public class UserHandler {
 
         User newUser = new User(userId, password, name, null);
         dao.save(newUser);
-        //Database.addUser(newUser);
         return "redirect:/";
     }
 

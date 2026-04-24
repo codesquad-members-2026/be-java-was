@@ -59,6 +59,15 @@
   color: #14212b;
 }
 
+.btn_outlined {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 14px;
+  background: transparent;
+  color: #14212b;
+  border: 1px solid #d2dae0;
+}
+
 .btn_contained {
   font-weight: 700;
   font-size: 14px;

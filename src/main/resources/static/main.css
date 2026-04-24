@@ -49,6 +49,13 @@
   color: #14212b;
 }
 
+.post__date {
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 14px;
+  color: #879298;
+}
+
 .post__menu {
   width: 100%;
   display: flex;
