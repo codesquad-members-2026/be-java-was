@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../reset.css" rel="stylesheet" />
+    <link href="../global.css" rel="stylesheet" />
+    <style>
+      .user-list {
+        display: flex;
+        flex-direction: column;
+        width: 664px;
+        gap: 16px;
+      }
+
+      .user-list__item {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        padding: 16px;
+        border: 1px solid #d2dae0;
+        border-radius: 8px;
+      }
+
+      .user-list__item__img {
+        width: 48px;
+        height: 48px;
+        background: #d9d9d9;
+        border-radius: 50%;
+        flex-shrink: 0;
+      }
+
+      .user-list__item__info {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .user-list__item__name {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 25.6px;
+        color: #14212b;
+      }
+
+      .user-list__item__id {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 14px;
+        color: #879298;
+      }
+
+      .user-list__item__email {
+        font-weight: 400;
+        font-size: 14px;
+        line-height: 14px;
+        color: #4b5966;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header class="header">
+        <a href="/"><img src="../img/signiture.svg" /></a>
+        <ul class="header__menu">
+          <li class="header__menu__item">
+            <a class="btn btn_contained btn_size_s" href="/">홈으로</a>
+          </li>
+        </ul>
+      </header>
+      <div class="page">
+        <h2 class="page-title">사용자 목록</h2>
+        <div class="user-list">
+          {{#users}}
+          <div class="user-list__item">
+            <div class="user-list__item__img"></div>
+            <div class="user-list__item__info">
+              <p class="user-list__item__name">{{name}}</p>
+              <p class="user-list__item__id">@{{userId}}</p>
+              {{#email}}
+              <p class="user-list__item__email">{{email}}</p>
+              {{/email}}
+            </div>
+          </div>
+          {{/users}}
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

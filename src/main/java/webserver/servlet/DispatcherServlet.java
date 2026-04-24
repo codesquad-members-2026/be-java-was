@@ -4,19 +4,23 @@ import java.io.IOException;
 import webserver.http.HttpRequest;
 import webserver.http.HttpResponse;
 import webserver.exception.PageNotFoundException;
+import webserver.resource.ResourceLoader;
+import webserver.response.ResponseRenderer;
+import webserver.response.ResponseResolver;
+import webserver.response.TemplateData;
 import webserver.servlet.handler.HandlerMappings;
 import webserver.servlet.handler.HandlerMethod;
 import webserver.session.SessionManager;
 
 public class DispatcherServlet implements HttpServlet {
     private final HandlerMappings handlerMappings;
-    private final ResourceRenderer renderer;
     private final SessionManager sessionManager;
+    private final ResponseResolver responseResolver;
 
-    public DispatcherServlet(ResourceRenderer renderer, HandlerMappings handlerMappings,
+    public DispatcherServlet(ResponseResolver responseResolver, HandlerMappings handlerMappings,
                              SessionManager sessionManager) {
         this.handlerMappings = handlerMappings;
-        this.renderer = renderer;
+        this.responseResolver = responseResolver;
         this.sessionManager = sessionManager;
     }
 
@@ -29,7 +33,9 @@ public class DispatcherServlet implements HttpServlet {
             throw new PageNotFoundException("페이지를 찾을 수 없음: ");
         }
 
-        String resource = handlerMethod.execute(request, response, sessionManager);
-        renderer.render(resource, response);
+        TemplateData data = new TemplateData();
+        String resource = handlerMethod.execute(request, response, data, sessionManager);
+        ResponseRenderer renderer = responseResolver.resolve(resource);
+        renderer.render(resource, response, data);
     }
 }
