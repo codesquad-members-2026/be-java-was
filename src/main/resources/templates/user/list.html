@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="../static/reset.css" rel="stylesheet" />
+    <link href="../static/global.css" rel="stylesheet" />
+    <link href="../static/main.css" rel="stylesheet" />
+    <style>
+        /* 💡 사용자 목록 페이지 전용 넓은 컨테이너 */
+        .list-container {
+            max-width: 900px !important;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        /* 💡 테이블 전체 윤곽 및 비율 고정 */
+        .user-list-table {
+            width: 100%; /* 부모(list-container)의 너비에 맞춤 */
+            table-layout: fixed; /* 데이터 길이에 상관없이 지정한 열 너비 비율을 엄격하게 유지 */
+            border-collapse: collapse;
+            background-color: #fff;
+            border: 1px solid #dbdbdb;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04); /* 살짝 떠 있는 듯한 고급스러운 그림자 */
+        }
+
+        /* 💡 헤더(분류명) 디자인 */
+        .user-list-table th {
+            background-color: #fafafa;
+            padding: 18px 24px; /* 여백을 조금 더 주어 숨통을 틔움 */
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+            border-bottom: 1px solid #dbdbdb;
+            color: #8e8e8e;
+            letter-spacing: -0.2px; /* 글자 간격을 살짝 좁혀 단정하게 */
+        }
+
+        /* 💡 본문 데이터 디자인 */
+        .user-list-table td {
+            padding: 16px 24px;
+            border-bottom: 1px solid #efefef;
+            vertical-align: middle;
+            font-size: 14px;
+            color: #262626;
+            line-height: 1.5;
+        }
+
+        /* 마지막 줄 밑줄 제거 */
+        .user-list-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* 💡 열(Column) 너비 황금비율 지정 */
+        .user-list-table th:nth-child(1), .user-list-table td:nth-child(1) {
+            width: 35%; /* 아이디 */
+            font-weight: 500; /* 아이디는 조금 더 강조 */
+        }
+        .user-list-table th:nth-child(2), .user-list-table td:nth-child(2) {
+            width: 25%; /* 이름 */
+        }
+        .user-list-table th:nth-child(3), .user-list-table td:nth-child(3) {
+            width: 40%; /* 이메일 (가장 길 수 있으므로 넓게) */
+            color: #8e8e8e; /* 이메일은 보조 정보이므로 색상을 살짝 연하게 */
+        }
+
+        /* 💡 마우스 호버(Hover) 액션 추가 */
+        .user-list-table tbody tr {
+            transition: background-color 0.2s ease;
+        }
+        .user-list-table tbody tr:hover {
+            background-color: #fafafa; /* 마우스를 올리면 살짝 회색으로 변해서 클릭 가능한 느낌 부여 */
+        }
+
+    </style>
+</head>
+<body>
+<div class="container list-container">
+    <header class="header">
+        <a href="/"><img src="../static/img/signiture.svg" /></a>
+        <ul class="header__menu">
+            <li class="header__menu__item" style="display: {{ showLogout }};">
+                <span style="font-weight: bold; margin-right: 10px;">환영합니다 {{ userName }}님!</span>
+            </li>
+            <li class="header__menu__item" style="display: {{ showLogout }}">
+                <a class="btn btn_contained btn_size_s" href="/article/">글쓰기</a>
+            </li>
+            <li class="header__menu__item" style="display: {{ showLogout }}">
+                <form method="POST" action="/logout">
+                    <button id="logout-btn" class="btn btn_ghost btn_size_s" type="submit">
+                        로그아웃
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </header>
+
+    <div class="wrapper">
+        <div style="margin-bottom: 24px;">
+            <h2 style="font-size: 22px; font-weight: 600; color: #262626;">사용자 목록</h2>
+        </div>
+
+        <table class="user-list-table">
+            <thead>
+            <tr>
+                <th>사용자 아이디</th>
+                <th>이름</th>
+                <th>이메일</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{ userListHtml }}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
